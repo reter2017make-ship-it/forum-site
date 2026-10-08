@@ -1,0 +1,15 @@
+<%- include('top') %>
+<div class="block-outer"><span class="u-dim u-small">Категории содержат разделы. Разделы могут иметь подразделы. Ссылки ведут на любую страницу.</span>
+  <span><a class="button button--primary" href="/admin/nodes/add?type=category">＋ Категория</a> <a class="button button--primary" href="/admin/nodes/add?type=forum">＋ Раздел</a> <a class="button" href="/admin/nodes/add?type=link">＋ Ссылка</a></span></div>
+<% function row(n, depth) { %>
+  <tr><td style="padding-left:<%= 10 + depth * 24 %>px"><%= n.type === 'category' ? '🗂' : n.type === 'link' ? '🔗' : '💬' %> <a href="/admin/nodes/<%= n.id %>/edit"><b><%= n.title %></b></a> <span class="u-muted u-small"><%= nodeUrl(n) %></span></td>
+  <td class="cell-num"><%= n.display_order %></td><td class="cell-num"><%= n.threads %></td><td class="cell-num"><%= n.posts %></td>
+  <td class="u-right" style="white-space:nowrap"><% if (n.type !== 'link') { %><a class="button button--small button--link" href="/admin/nodes/add?type=forum&parent=<%= n.id %>">＋ подраздел</a><% } %>
+    <form method="post" action="/admin/nodes/<%= n.id %>/delete" style="display:inline" data-confirm="Удалить «<%= n.title %>» вместе с подразделами и всеми темами?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--link" style="color:var(--danger)">Удалить</button></form></td></tr>
+  <% n.children.forEach(function (c) { row(c, depth + 1) }) %>
+<% } %>
+<div class="block"><div class="block-container tableWrap"><table class="dataList">
+  <tr><th>Название</th><th class="cell-num">Порядок</th><th class="cell-num">Темы</th><th class="cell-num">Сообщения</th><th></th></tr>
+  <% roots.forEach(function (n) { row(n, 0) }) %>
+</table></div></div>
+<%- include('bottom') %>

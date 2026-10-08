@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Настройки аккаунта</h1></div>
+<form method="post" action="/account/" enctype="multipart/form-data" class="block" style="max-width:820px">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Аватар</dt><dd style="display:flex;gap:12px;align-items:center"><%- include('partials/avatar', { u: me, size: 'm', link: false }) %><input type="file" name="avatar" accept="image/png,image/jpeg,image/gif,image/webp"></dd></dl>
+    <dl class="formRow"><dt>Имя</dt><dd><input class="input" name="real_name" value="<%= me.real_name %>" maxlength="50"></dd></dl>
+    <dl class="formRow"><dt>Город</dt><dd><input class="input" name="location" value="<%= me.location %>" maxlength="50"></dd></dl>
+    <dl class="formRow"><dt>О себе</dt><dd><textarea class="input" name="about" style="min-height:90px"><%= me.about %></textarea></dd></dl>
+    <dl class="formRow"><dt>Текущий пароль</dt><dd><input class="input" type="password" name="current_password" autocomplete="current-password"><div class="formRow-explain">Нужен только для смены пароля.</div></dd></dl>
+    <dl class="formRow"><dt>Новый пароль</dt><dd><input class="input" type="password" name="new_password" autocomplete="new-password" minlength="6"></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button></div>
+  </div>
+</form>
+<%- include('partials/foot') %>

@@ -1,0 +1,8 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value"><%= gameOnly ? 'Создать игру: выберите тотализатор' : 'Создать тему: выберите раздел' %></h1></div>
+<div class="block"><div class="block-container"><ul class="listPlain">
+  <% forums.filter(f => !gameOnly || f.is_game).forEach(function (f) { %>
+    <li><a href="/f/<%= f.slug %>/create-thread"><%= f.title %></a><% if (f.description) { %><div class="u-small u-muted"><%= f.description %></div><% } %></li>
+  <% }) %>
+</ul></div></div>
+<%- include('partials/foot') %>

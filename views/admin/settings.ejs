@@ -1,0 +1,24 @@
+<%- include('top') %>
+<form method="post" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <h2 class="block-header">Сайт</h2>
+    <dl class="formRow"><dt>Название сайта</dt><dd><input class="input" name="site_name" value="<%= s.site_name %>"><div class="formRow-explain">Используется в заголовке вкладки и на главной.</div></dd></dl>
+    <dl class="formRow"><dt>Логотип</dt><dd class="inlineForm"><input class="input" name="logo_main" value="<%= s.logo_main %>" placeholder="Жирная часть"><input class="input" name="logo_suffix" value="<%= s.logo_suffix %>" placeholder="Продолжение"></dd></dl>
+    <dl class="formRow"><dt>Описание</dt><dd><textarea class="input" name="site_description" style="min-height:70px"><%= s.site_description %></textarea><div class="formRow-explain">Для поисковиков и соцсетей.</div></dd></dl>
+    <dl class="formRow"><dt>Цвет шапки</dt><dd><input type="color" name="theme_color" value="<%= s.theme_color %>"></dd></dl>
+    <dl class="formRow"><dt>Режим по умолчанию</dt><dd><select class="input" name="default_scheme" style="width:auto"><% [['system','Системный'],['light','Светлый'],['dark','Тёмный']].forEach(function (o) { %><option value="<%= o[0] %>" <%= s.default_scheme === o[0] ? 'selected' : '' %>><%= o[1] %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Текст в подвале</dt><dd><input class="input" name="footer_text" value="<%= s.footer_text %>" placeholder="© 2026 Название"></dd></dl>
+    <dl class="formRow"><dt></dt><dd><label><input type="checkbox" name="registration_open" value="1" <%= s.registration_open === '1' ? 'checked' : '' %>> Регистрация открыта</label></dd></dl>
+    <h2 class="block-header">Главная страница</h2>
+    <dl class="formRow"><dt>Приветствие для гостей</dt><dd><textarea class="input" name="welcome_notice" style="min-height:170px"><%= s.welcome_notice %></textarea><div class="formRow-explain">Зелёная плашка вверху страниц для незарегистрированных посетителей. BBCode; {site} заменяется на название сайта, строка «---» рисует разделитель. Пусто — плашка не показывается.</div></dd></dl>
+    <dl class="formRow"><dt>Картинка приветствия</dt><dd><input class="input" name="notice_image" value="<%= s.notice_image %>" placeholder="/public/img/notice.svg"><div class="formRow-explain">Квадрат 48×48 слева от текста. Пусто — стандартная.</div></dd></dl>
+    <dl class="formRow"><dt>Баннер «Инфосервис»</dt><dd><input class="input" name="infoservice_title" value="<%= s.infoservice_title %>" placeholder="Заголовок"><input class="input" name="infoservice_text" value="<%= s.infoservice_text %>" placeholder="Подзаголовок" style="margin-top:4px"><div class="inlineForm" style="margin-top:4px"><input class="input" name="infoservice_link" value="<%= s.infoservice_link %>" placeholder="Ссылка"><input class="input" name="infoservice_image" value="<%= s.infoservice_image %>" placeholder="Картинка баннера (URL)"></div><div class="formRow-explain">Если указана картинка, она показывается вместо текстового баннера. Пустой заголовок скрывает блок.</div></dd></dl>
+    <h2 class="block-header">Участники</h2>
+    <dl class="formRow"><dt>Звания</dt><dd><textarea class="input" name="ranks" style="min-height:120px"><%= s.ranksList.map(r => r.min + ' = ' + r.title).join('\n') %></textarea><div class="formRow-explain">Каждая строка: «число сообщений = звание».</div></dd></dl>
+    <dl class="formRow"><dt>Реакции</dt><dd><input class="input" name="reactions" value="<%= s.reactionsList.join(' ') %>"><div class="formRow-explain">Эмодзи через пробел. Первая реакция ставится по клику на «Нравится».</div></dd></dl>
+    <h2 class="block-header">Счётчики</h2>
+    <dl class="formRow"><dt>Код счётчика</dt><dd><textarea class="input" name="counter_code" style="min-height:100px;font-family:monospace;font-size:13px"><%= s.counter_code %></textarea><div class="formRow-explain">Например, код LiveInternet или Яндекс.Метрики. Выводится в подвале слева на каждой странице.</div></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button></div>
+  </div>
+</form>
+<%- include('bottom') %>

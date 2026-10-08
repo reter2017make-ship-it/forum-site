@@ -1,0 +1,13 @@
+<% if (pg.pages > 1) {
+  const qs = locals.pageQuery || '';
+  const href = n => baseUrl.includes('?') || baseUrl.endsWith('=') ? baseUrl + n : (n === 1 ? baseUrl : baseUrl + 'page-' + n) + qs;
+  const show = new Set([1, pg.pages, pg.page - 2, pg.page - 1, pg.page, pg.page + 1, pg.page + 2]);
+  let last = 0; %>
+<nav class="pageNav">
+  <% if (pg.page > 1) { %><a href="<%= href(pg.page - 1) %>">‹ Назад</a><% } %>
+  <% for (let i = 1; i <= pg.pages; i++) { if (!show.has(i)) continue; if (i - last > 1) { %><span class="pageNav-gap">…</span><% } last = i; %>
+    <% if (i === pg.page) { %><span class="is-current"><%= i %></span><% } else { %><a href="<%= href(i) %>"><%= i %></a><% } %>
+  <% } %>
+  <% if (pg.page < pg.pages) { %><a href="<%= href(pg.page + 1) %>">Вперёд ›</a><% } %>
+</nav>
+<% } %>

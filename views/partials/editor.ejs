@@ -1,0 +1,14 @@
+<div class="editorToolbar" data-editor="<%= id %>">
+  <button type="button" data-tag="b" title="Жирный"><b>B</b></button>
+  <button type="button" data-tag="i" title="Курсив"><i>I</i></button>
+  <button type="button" data-tag="u" title="Подчёркнутый"><u>U</u></button>
+  <button type="button" data-tag="s" title="Зачёркнутый"><s>S</s></button>
+  <button type="button" data-tag="url" title="Ссылка">🔗</button>
+  <button type="button" data-tag="img" title="Изображение">🖼</button>
+  <button type="button" data-tag="quote" title="Цитата">❝</button>
+  <button type="button" data-tag="spoiler" title="Спойлер">👁</button>
+  <button type="button" data-tag="list" title="Список">☰</button>
+  <button type="button" data-tag="center" title="По центру">≡</button>
+  <% ['😀','😂','😉','😎','🤔','😡','👍','🔥','🍀','⚽','🏒','💰'].forEach(function (e) { %><button type="button" data-tag="emoji"><%= e %></button><% }) %>
+</div>
+<textarea class="input" id="<%= id %>" name="message" rows="8" placeholder="Напишите сообщение…" required><%= typeof value !== 'undefined' ? value : '' %></textarea>

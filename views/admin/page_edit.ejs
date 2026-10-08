@@ -1,0 +1,9 @@
+<%- include('top') %>
+<form method="post" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Заголовок</dt><dd><input class="input" name="title" value="<%= p.title %>"></dd></dl>
+    <dl class="formRow"><dt>Текст</dt><dd><textarea class="input" name="body" style="min-height:420px"><%= p.body %></textarea><div class="formRow-explain">Поддерживается BBCode: [b]жирный[/b], [i]курсив[/i], [url=адрес]ссылка[/url], [img]адрес[/img], [list][*]пункт[/list], [quote], [spoiler].</div></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button></div>
+  </div>
+</form>
+<%- include('bottom') %>

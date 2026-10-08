@@ -1,0 +1,45 @@
+<%- include('partials/head') %>
+<div class="p-title">
+  <h1 class="p-title-value"><%= node.title %></h1>
+  <% if (me && !me.is_banned && (!node.staff_only_post || isStaff)) { %><% if (node.is_game) { %><a class="button button--orange" href="/f/<%= node.slug %>/create-thread"><%- fmt.icon('university') %> Игра</a><% } else { %><a class="button button--green" href="/f/<%= node.slug %>/create-thread"><%- fmt.icon('edit') %> Создать тему</a><% } %><% } %>
+</div>
+<% if (node.description) { %><div class="p-description"><%= node.description %></div><% } %>
+
+<% if (node.children.length) { %>
+<div class="block"><div class="block-container">
+  <div class="block-body"><% node.children.forEach(function (n) { %><%- include('partials/node_row', { n }) %><% }) %></div>
+</div></div>
+<% } %>
+
+<div class="block">
+  <div class="block-outer"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+  <% if (prefixes.length) { %>
+  <div class="block"><div class="block-container prefixBar">
+    <a href="<%= baseUrl %>"><span class="label label--primary<%= !prefixId ? ' is-active' : '' %>">Все</span></a>
+    <% prefixes.forEach(function (p) { %><a href="<%= baseUrl %>?prefix_id=<%= p.id %>" title="<%= p.title %>"><span class="label <%= p.css %><%= prefixId === p.id ? ' is-active' : '' %>"><%= p.title %></span></a><% }) %>
+  </div></div>
+  <% } %>
+  <div class="block-container">
+    <div class="block-filterBar">
+      <% const curPrefix = prefixes.find(function (p) { return p.id === prefixId; }); %>
+      <% if (curPrefix) { %><span class="filterChip">Префикс: <%= curPrefix.title %> <a href="<%= baseUrl %>" title="Убрать фильтр">×</a></span><% } %>
+      <details class="filterMenu">
+        <summary>Фильтры</summary>
+        <div class="filterMenu-body">
+          <div class="menu-header">Показать только:</div>
+          <div class="filterMenu-row">
+            <a href="<%= baseUrl %>" class="<%= !prefixId ? 'is-active' : '' %>">(Любой)</a>
+            <% prefixes.forEach(function (p) { %><a href="<%= baseUrl %>?prefix_id=<%= p.id %>" class="<%= prefixId === p.id ? 'is-active' : '' %>"><span class="label <%= p.css %>"><%= p.title %></span></a><% }) %>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="block-body">
+      <% if (sticky.length) { %><div class="structItem-group--sticky"><% sticky.forEach(function (t) { %><%- include('partials/thread_row', { t }) %><% }) %></div><% } %>
+      <% threads.forEach(function (t) { %><%- include('partials/thread_row', { t }) %><% }) %>
+      <% if (!sticky.length && !threads.length) { %><div class="block-empty">В этом разделе пока нет тем.</div><% } %>
+    </div>
+  </div>
+  <div class="block-outer" style="margin-top:4px"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+</div>
+<%- include('partials/foot') %>

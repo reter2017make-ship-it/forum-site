@@ -1,0 +1,40 @@
+<%- include('partials/head') %>
+<div class="p-title">
+  <h1 class="p-title-value"><%= node.title %></h1>
+  <a class="button button--orange" href="/f/<%= node.slug %>/create-thread"><%- fmt.icon('university') %> Игра</a>
+</div>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" class="block" action="/f/<%= node.slug %>/create-thread">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <% if (node.game_notice) { %><div class="block-row formInfoRow"><%- fmt.bbcode(node.game_notice) %></div><% } %>
+    <dl class="formRow formRow--input">
+      <dt><label for="g-draw">Тираж</label><span class="formRow-hint">Обязательно</span></dt>
+      <dd><input class="input" id="g-draw" name="draw" value="<%= form.draw || '' %>" placeholder="1234" inputmode="numeric" pattern="\d{1,7}" maxlength="7" required>
+        <div class="formRow-explain">ТОЛЬКО порядковый номер тиража тотализатора, БЕЗ символа №</div></dd>
+    </dl>
+    <dl class="formRow formRow--input">
+      <dt><label for="g-date">начало</label><span class="formRow-hint">Обязательно</span></dt>
+      <dd><div class="inputGroup inputGroup--dateTime"><input class="input" type="date" id="g-date" name="start_date" value="<%= form.start_date || '' %>" required><input class="input" type="time" name="start_time" value="<%= form.start_time || defaultTime %>" aria-label="Время" required></div>
+        <div class="formRow-explain">Дата тиража (сегодня-завтра), либо дата запланированной игры, либо дата начала дистанции</div></dd>
+    </dl>
+    <dl class="formRow formRow--input">
+      <dt><label for="g-scheme">схема</label><span class="formRow-hint">Обязательно</span></dt>
+      <dd><select class="input" id="g-scheme" name="scheme" required><option value="">Выбрать один</option><% schemes.forEach(function (s) { %><option value="<%= s %>" <%= form.scheme === s ? 'selected' : '' %>><%= s %></option><% }) %></select>
+        <div class="formRow-explain">Укажите ОСНОВНУЮ (дополнительные форматы можно указать после создания темы в шапке)</div></dd>
+    </dl>
+    <dl class="formRow formRow--input">
+      <dt><label for="g-events">События тиража</label><span class="formRow-hint">Обязательно</span></dt>
+      <dd><%- include('partials/editor_compact', { id: 'g-events', name: 'events', value: form.events || '', placeholder: 'Команда 1 - Команда 2, Команда 3 - Команда 4…', rows: 10 }) %>
+        <div class="formRow-explain">Скопируйте, вставьте и отформатируйте список всех событий тиража</div></dd>
+    </dl>
+    <dl class="formRow formRow--input">
+      <dt><label for="g-players">Список игроков</label><span class="formRow-hint">Обязательно</span></dt>
+      <dd><%- include('partials/editor_compact', { id: 'g-players', name: 'players', value: form.players || '', placeholder: 'Введите свой логин без @ и сумму взноса…', rows: 10 }) %>
+        <div class="formRow-explain">Введите ТОЛЬКО свой логин (рулевого) без @ и сумму взноса, например: <%= me.username %> - 1,000. Запись игроков осуществляется после создания темы</div></dd>
+    </dl>
+    <div class="formSubmitRow formSubmitRow--center"><button class="button button--primary" type="submit"><%- fmt.icon('save') %> Отправить</button></div>
+  </div>
+</form>
+<% if (isStaff) { %><div class="u-small u-muted" style="margin-top:6px"><a href="/f/<%= node.slug %>/create-thread?type=plain">Создать обычную тему в этом разделе</a></div><% } %>
+<%- include('partials/foot') %>

@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">🛠 Инфосервис</h1></div>
+<div class="block"><div class="block-container">
+  <% if (allowed) { %>
+    <div class="block-row message-body"><%- fmt.bbcode(page.body) %></div>
+  <% } else { %>
+    <div class="block-row">
+      <div class="notice notice--warning" style="margin:0 0 10px">Инфосервис доступен участникам со статусом «Игрок» (10 и более сообщений на форуме).</div>
+      <% if (!me) { %><a class="button button--primary" href="/login/?to=/info/">Вход</a> <a class="button" href="/register/">Регистрация</a><% } %>
+    </div>
+  <% } %>
+</div></div>
+<%- include('partials/foot') %>

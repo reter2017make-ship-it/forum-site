@@ -1,0 +1,53 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value"><%= cat ? cat.title : 'Файлы' %></h1><% if (me && !me.is_banned) { %><a class="button button--cta" href="/files/add">＋ Добавить файл</a><% } %></div>
+<% const catName = {}; cats.forEach(function (c) { catName[c.id] = c.title; }); %>
+<div class="p-body-main p-body-main--sideLeft">
+  <div class="p-body-content">
+    <div class="block-outer"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+    <div class="block">
+      <div class="block-container">
+        <div class="block-filterBar">
+          <% if (cat) { %><span class="filterChip">Категория: <%= cat.title %> <a href="/files/" title="Убрать фильтр">×</a></span><% } %>
+          <details class="filterMenu"><summary>Фильтры</summary><div class="filterMenu-body"><div class="menu-header">Категория:</div><div class="filterMenu-row">
+            <a href="/files/" class="<%= !cat ? 'is-active' : '' %>">(Любая)</a>
+            <% cats.forEach(function (c) { %><a href="/files/categories/<%= c.id %>/" class="<%= cat && cat.id === c.id ? 'is-active' : '' %>"><%= c.title %></a><% }) %>
+          </div></div></details>
+        </div>
+        <% files.forEach(function (f) { %>
+          <div class="fileItem">
+            <div class="fileItem-icon">⚙️<%- include('partials/avatar', { u: f.user_id ? { username: f.username, avatar: avatars[f.user_id] } : null, name: f.username, size: 'xxs' }) %></div>
+            <div class="fileItem-main">
+              <div class="fileItem-title"><a href="/files/<%= f.id %>/"><%= f.title %><% if (f.version) { %> <%= f.version %><% } %></a> <% if (f.is_featured) { %><span class="badge">Рекомендуемый</span><% } %></div>
+              <div class="structItem-minor"><% if (f.user_id) { %><a href="/members/<%= encodeURIComponent(f.username) %>/"><%= f.username %></a><% } else { %><span><%= f.username %></span><% } %> · <span class="u-dim"><%= fmt.dmy(f.created_at) %></span><% if (catName[f.category_id]) { %> · <a href="/files/categories/<%= f.category_id %>/"><%= catName[f.category_id] %></a><% } %></div>
+              <% if (f.tagline) { %><div class="fileItem-tagline"><%= f.tagline %></div><% } %>
+            </div>
+            <div class="fileItem-meta">
+              <div class="fileItem-rating"><span class="stars">★★★★★</span><span>0 оценок</span></div>
+              <dl><dt>Скачивания</dt><dd><%= f.downloads %></dd></dl>
+              <dl><dt>Обновлено</dt><dd><%= fmt.dmy(f.updated_at) %></dd></dl>
+            </div>
+          </div>
+        <% }) %>
+        <% if (!files.length) { %><div class="block-empty">Файлов пока нет.</div><% } %>
+      </div>
+      <div class="block-outer" style="margin-top:4px"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+    </div>
+  </div>
+  <aside class="p-body-sidebar">
+    <div class="block"><div class="block-container"><h3 class="block-minorHeader block-minorHeader--strong">Категории</h3><ul class="listPlain sideCats">
+      <% cats.forEach(function (c) { %><li class="<%= cat && cat.id === c.id ? 'is-selected' : '' %>"><a href="/files/categories/<%= c.id %>/"><%= c.title %></a><span class="count"><%= c.cnt %></span></li><% }) %>
+    </ul></div></div>
+    <% if (featured.length) { %>
+    <div class="block"><div class="block-container"><h3 class="block-minorHeader"><%- fmt.icon('angles', 'chev') %> Полезные файлы:</h3><ul class="listPlain fileList">
+      <% featured.forEach(function (f) { %><li><span class="fileList-icon">⚙️</span><a href="/files/<%= f.id %>/"><%= f.title %></a></li><% }) %>
+    </ul></div></div>
+    <% } %>
+    <div class="block"><div class="block-container statsList"><h3 class="block-minorHeader"><%- fmt.icon('angles', 'chev') %> Статистика файлов:</h3><div style="padding:2px 0 4px">
+      <dl><dt>Категории:</dt><dd><%= cats.length %></dd></dl>
+      <dl><dt>Файлы:</dt><dd><%= stats.files %></dd></dl>
+      <dl><dt>Скачивания:</dt><dd><%= stats.downloads.toLocaleString('en-US') %></dd></dl>
+      <dl><dt>Размер:</dt><dd><%= fmt.bytes(stats.size) %></dd></dl>
+    </div></div></div>
+  </aside>
+</div>
+<%- include('partials/foot') %>

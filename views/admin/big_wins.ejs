@@ -1,0 +1,19 @@
+<%- include('top') %>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Виджет «Большие победы» на главной</h2>
+  <div class="block-row u-small u-dim">Показываются первые 6 записей по порядку.</div>
+  <% rows.concat([{}]).forEach(function (w) { %>
+    <form method="post" action="/admin/big-wins" class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>"><% if (w.id) { %><input type="hidden" name="id" value="<%= w.id %>"><% } %>
+      <input class="input" name="title" value="<%= w.title || '' %>" placeholder="Балтбет. №4896" style="width:200px">
+      <input class="input" name="win_date" value="<%= w.win_date || '' %>" placeholder="26.05.26" style="width:95px" title="Дата">
+      <input class="input" name="username" value="<%= w.username || '' %>" placeholder="Игрок" style="width:120px">
+      <input class="input" type="number" name="stake" value="<%= w.stake || '' %>" placeholder="Ставка ₽" style="width:110px">
+      <input class="input" type="number" name="payout" value="<%= w.payout || '' %>" placeholder="Выплата ₽" style="width:120px">
+      <input class="input" name="link" value="<%= w.link || '' %>" placeholder="/t/123/" style="width:110px">
+      <input class="input" type="number" name="display_order" value="<%= w.display_order || 0 %>" style="width:70px" title="Порядок">
+      <button class="button button--small <%= w.id ? '' : 'button--primary' %>"><%= w.id ? 'Сохранить' : '＋ Добавить' %></button>
+    </form>
+    <% if (w.id) { %><form method="post" action="/admin/big-wins/<%= w.id %>/delete" class="block-row" style="border:0;padding-top:0" data-confirm="Удалить запись?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--link" style="color:var(--danger)">Удалить</button></form><% } %>
+  <% }) %>
+</div></div>
+<%- include('bottom') %>

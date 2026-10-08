@@ -1,0 +1,35 @@
+<aside class="p-body-sidebar">
+  <div class="block">
+    <div class="block-container">
+      <h3 class="block-minorHeader"><%- fmt.icon('angles') %><a href="/bitva/?status=open">Битва прогнозистов:</a></h3>
+      <% const t = side.tournament; if (t) { const canVote = me && !me.is_banned && t.matches.length; %>
+        <a class="pickem-title" href="/bitva/<%= t.id %>/"><%= t.title %></a>
+        <% if (canVote) { %><form method="post" action="/bitva/<%= t.id %>/predict"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="to" value="home"><% } %>
+        <% t.matches.forEach(function (m) {
+             const total = (m.votes['1'] || 0) + (m.votes.X || 0) + (m.votes['2'] || 0);
+             const max = Math.max(m.votes['1'] || 0, m.votes.X || 0, m.votes['2'] || 0); %>
+          <div class="pickem-match">
+            <div class="pickem-meta"><b><%= m.home %> - <%= m.away %></b> (<%= fmt.dmy(m.start_at) %> в <%= fmt.hm(m.start_at) %>)</div>
+            <% [['1', m.home], ['X', 'Ничья'], ['2', m.away]].forEach(function (o) {
+                 const c = m.votes[o[0]] || 0;
+                 const pct = total ? Math.round(c * 100 / total) : 0;
+                 const fl = o[0] === 'X' ? '' : fmt.flag(o[1]);
+                 const cls = 'pickem-row' + (max > 0 && c === max ? ' is-leader' : '') + (m.mine === o[0] ? ' is-mine' : '');
+                 const tag = canVote ? 'label' : 'div'; %>
+              <<%= tag %> class="<%= cls %>" title="<%= o[1] %>: <%= c %>">
+                <% if (canVote) { %><input type="radio" name="m<%= m.id %>" value="<%= o[0] %>" <%= m.mine === o[0] ? 'checked' : '' %>><% } %>
+                <span class="pickem-team<%= fl ? ' is-flag' : '' %>"><%= fl || o[1] %></span>
+                <span class="pickem-count"><%= c %></span>
+                <span class="pickem-bar"><i style="width:<%= Math.max(pct, 4) %>%"></i></span>
+              </<%= tag %>>
+            <% }) %>
+          </div>
+        <% }) %>
+        <% if (!t.matches.length) { %><div class="pickem-empty">Матчи турнира скоро появятся.</div><% } %>
+        <% if (canVote) { %><div class="block-footer block-footer--right"><button class="button button--small" type="submit">Сохранить прогноз</button></div></form><% } %>
+      <% } else { %>
+        <div class="pickem-empty">Сейчас нет открытых турниров. <a href="/bitva/hall-of-fame">Зал славы</a></div>
+      <% } %>
+    </div>
+  </div>
+</aside>

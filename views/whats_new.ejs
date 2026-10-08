@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value"><%= pageTitle %></h1></div>
+<% if (locals.whatsNew) { %>
+<div class="tabs tabs--page"><% if (me) { %><a href="/new/">Непрочитанное</a><% } %><a href="/new/" class="is-active">Что нового?</a></div>
+<% } %>
+<div class="block">
+  <div class="block-container">
+    <% if (locals.whatsNew) { %><h2 class="block-header block-header--minor">Последние сообщения</h2><% } %>
+    <div class="block-body">
+    <% threads.forEach(function (t) { %><%- include('partials/thread_row', { t, showNode: true }) %><% }) %>
+    <% if (!threads.length) { %><div class="block-empty">Нет тем, соответствующих этому запросу.</div><% } %>
+  </div></div>
+  <% if (baseUrl) { %><div class="block-outer" style="margin-top:4px"><%- include('partials/pagenav', { pg, baseUrl }) %></div><% } %>
+</div>
+<%- include('partials/foot') %>

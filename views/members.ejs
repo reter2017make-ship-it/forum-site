@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Участники</h1></div>
+<div class="block">
+  <div class="block-container">
+    <div class="tableWrap"><table class="dataList">
+      <tr><th></th><th>Участник</th><th>Звание</th><th class="cell-num">Сообщения</th><th class="cell-num">Реакции</th><th>Регистрация</th></tr>
+      <% users.forEach(function (u) { %>
+        <tr><td style="width:44px"><%- include('partials/avatar', { u, size: 'xs' }) %></td><td><%- include('partials/username', { u }) %></td><td class="u-dim"><%= u.rank %></td>
+        <td class="cell-num"><%= u.postCount %></td><td class="cell-num"><%= u.reactionCount %></td><td><%= fmt.dmy(u.created_at) %></td></tr>
+      <% }) %>
+    </table></div>
+  </div>
+  <div class="block-outer" style="margin-top:8px"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+</div>
+<%- include('partials/foot') %>

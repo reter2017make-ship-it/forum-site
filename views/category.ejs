@@ -1,0 +1,12 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value"><%= node.title %></h1></div>
+<div class="p-body-main">
+  <div class="p-body-content">
+    <div class="block"><div class="block-container"><div class="block-body">
+      <% node.children.forEach(function (n) { %><%- include('partials/node_row', { n }) %><% }) %>
+      <% if (!node.children.length) { %><div class="block-empty">В этой категории пока нет разделов.</div><% } %>
+    </div></div></div>
+  </div>
+  <%- include('partials/sidebar') %>
+</div>
+<%- include('partials/foot') %>

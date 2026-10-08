@@ -1,0 +1,8 @@
+<%- include('top') %>
+<div class="block-outer"><span></span><a class="button button--primary" href="/admin/tournaments/add">＋ Новый турнир</a></div>
+<div class="block"><div class="block-container tableWrap"><table class="dataList">
+  <tr><th>Турнир</th><th>Спорт / сезон</th><th>Статус</th><th class="cell-num">Участники</th><th class="cell-num">Матчи</th><th>Победитель</th></tr>
+  <% list.forEach(function (t) { %><tr><td><a href="/admin/tournaments/<%= t.id %>"><b><%= t.title %></b></a></td><td class="u-dim"><%= t.sport %> <%= t.season %></td>
+    <td><span class="badge badge--<%= t.status %>"><%= TOURNAMENT_STATUS[t.status] %></span></td><td class="cell-num"><%= t.members %></td><td class="cell-num"><%= t.match_count %></td><td><%= t.gold ? '🥇 ' + t.gold : '' %></td></tr><% }) %>
+</table><% if (!list.length) { %><div class="block-empty">Турниров пока нет.</div><% } %></div></div>
+<%- include('bottom') %>

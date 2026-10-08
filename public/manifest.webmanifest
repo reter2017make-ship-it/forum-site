@@ -1,0 +1,2 @@
+{ "name": "Форум о тотализаторах", "short_name": "Форум", "start_url": "/", "display": "standalone", "background_color": "#33354d", "theme_color": "#33354d",
+  "icons": [{ "src": "/public/img/favicon.svg", "sizes": "any", "type": "image/svg+xml" }] }

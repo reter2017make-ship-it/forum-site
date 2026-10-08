@@ -1,0 +1,38 @@
+<%- include('top') %>
+<details class="block" open><summary class="button button--primary">＋ Загрузить файл</summary>
+<form method="post" action="/admin/files/upload" enctype="multipart/form-data" class="block-container" style="margin-top:8px"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <dl class="formRow"><dt>Название</dt><dd><input class="input" name="title" required></dd></dl>
+  <dl class="formRow"><dt>Категория / версия</dt><dd class="inlineForm"><select class="input" name="category_id"><% cats.forEach(function (c) { %><option value="<%= c.id %>"><%= c.title %></option><% }) %></select><input class="input" name="version" placeholder="Версия"></dd></dl>
+  <dl class="formRow"><dt>Кратко</dt><dd><input class="input" name="tagline"></dd></dl>
+  <dl class="formRow"><dt>Описание</dt><dd><textarea class="input" name="description" style="min-height:70px"></textarea></dd></dl>
+  <dl class="formRow"><dt>Файл</dt><dd><input type="file" name="file" required> <label><input type="checkbox" name="is_featured" value="1"> Рекомендуемый</label></dd></dl>
+  <div class="formSubmitRow"><button class="button button--primary">Загрузить</button></div>
+</form></details>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Файлы</h2>
+  <% files.forEach(function (f) { %>
+    <details class="block-row"><summary><b><%= f.title %></b> <span class="u-muted u-small"><%= f.version %> · <%= f.cat_title || 'без категории' %> · загрузок <%= f.downloads %> · <%= fmt.bytes(f.size) %></span> <%= f.is_featured ? '⭐' : '' %></summary>
+      <form method="post" action="/admin/files/<%= f.id %>" style="margin-top:8px"><input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="inlineForm"><input class="input" name="title" value="<%= f.title %>" required><input class="input" name="version" value="<%= f.version %>" placeholder="Версия">
+          <select class="input" name="category_id"><% cats.forEach(function (c) { %><option value="<%= c.id %>" <%= f.category_id === c.id ? 'selected' : '' %>><%= c.title %></option><% }) %></select>
+          <label><input type="checkbox" name="is_featured" value="1" <%= f.is_featured ? 'checked' : '' %>> Рекомендуемый</label></div>
+        <input class="input" name="tagline" value="<%= f.tagline %>" placeholder="Кратко" style="margin-top:6px">
+        <textarea class="input" name="description" style="min-height:70px;margin-top:6px"><%= f.description %></textarea>
+        <div class="inlineForm" style="margin-top:6px"><button class="button button--small button--primary">Сохранить</button> <a class="button button--small" href="/files/<%= f.id %>/">Открыть</a></div>
+      </form>
+      <form method="post" action="/admin/files/<%= f.id %>/delete" data-confirm="Удалить файл?" style="margin-top:6px"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--danger">Удалить</button></form>
+    </details>
+  <% }) %>
+  <% if (!files.length) { %><div class="block-empty">Файлов нет.</div><% } %>
+</div></div>
+<div class="block"><div class="block-container"><h2 class="block-header">Категории файлов</h2>
+  <% cats.forEach(function (c) { %>
+    <div class="block-row inlineForm">
+      <form method="post" action="/admin/file-categories" class="inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="id" value="<%= c.id %>"><input class="input" name="title" value="<%= c.title %>" required><input class="input" type="number" name="display_order" value="<%= c.display_order %>" style="width:80px"><button class="button button--small">Сохранить</button></form>
+      <span class="u-muted u-small">файлов: <%= c.cnt %></span>
+      <form method="post" action="/admin/file-categories/<%= c.id %>/delete" data-confirm="Удалить категорию?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--link" style="color:var(--danger)">Удалить</button></form>
+    </div>
+  <% }) %>
+  <form method="post" action="/admin/file-categories" class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>"><input class="input" name="title" placeholder="Новая категория" required><input class="input" type="number" name="display_order" value="100" style="width:80px"><button class="button button--small button--primary">Добавить</button></form>
+</div></div>
+<%- include('bottom') %>

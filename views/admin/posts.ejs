@@ -1,0 +1,12 @@
+<%- include('top') %>
+<form method="get" class="block-outer inlineForm"><input class="input" name="q" value="<%= q %>" placeholder="Текст или автор"><button class="button">Найти</button></form>
+<div class="block"><div class="block-container">
+  <% posts.forEach(function (p) { %>
+    <div class="block-row" style="display:flex;gap:10px;justify-content:space-between">
+      <div style="min-width:0"><a href="/posts/<%= p.id %>/"><b><%= p.title %></b></a> <span class="u-small u-muted">· <%= p.username %> · <%= fmt.ago(p.created_at) %></span><div class="u-small"><%= fmt.plain(p.body, 300) %></div></div>
+      <form method="post" action="/admin/posts/<%= p.id %>/delete" data-confirm="Удалить сообщение?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--danger">Удалить</button></form>
+    </div>
+  <% }) %>
+  <% if (!posts.length) { %><div class="block-empty">Сообщений нет.</div><% } %>
+</div></div>
+<%- include('bottom') %>

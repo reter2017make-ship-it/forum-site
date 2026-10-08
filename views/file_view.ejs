@@ -1,0 +1,21 @@
+<%- include('partials/head') %>
+<ul class="p-breadcrumbs"><li><a href="/files/">Файлы</a></li><% if (f.category_id) { %><li><a href="/files/categories/<%= f.category_id %>/"><%= f.cat_title %></a></li><% } %></ul>
+<div class="p-title">
+  <h1 class="p-title-value"><%= f.title %> <% if (f.version) { %><span class="u-muted" style="font-size:16px"><%= f.version %></span><% } %></h1>
+  <a class="button button--cta" href="/files/<%= f.id %>/download">⬇ Скачать</a>
+</div>
+<% if (f.tagline) { %><div class="p-description"><%= f.tagline %></div><% } %>
+<div class="p-body-main">
+  <div class="p-body-content"><div class="block"><div class="block-container">
+    <div class="block-row message-body"><%- f.description ? fmt.bbcode(f.description) : '<span class="u-muted">Описание не добавлено.</span>' %></div>
+  </div></div></div>
+  <aside class="p-body-sidebar"><div class="block"><div class="block-container statsList"><h3 class="block-minorHeader">Информация</h3><div style="padding:4px 0">
+    <dl><dt>Автор</dt><dd><% if (f.user_id) { %><a href="/members/<%= encodeURIComponent(f.username) %>/"><%= f.username %></a><% } else { %><%= f.username %><% } %></dd></dl>
+    <dl><dt>Загрузки</dt><dd><%= f.downloads %></dd></dl>
+    <dl><dt>Размер</dt><dd><%= fmt.bytes(f.size) %></dd></dl>
+    <dl><dt>Добавлен</dt><dd><%= fmt.dmy(f.created_at) %></dd></dl>
+    <dl><dt>Обновлён</dt><dd><%= fmt.dmy(f.updated_at) %></dd></dl>
+    <dl><dt>Рейтинг</dt><dd class="stars">☆☆☆☆☆</dd></dl>
+  </div></div></div></aside>
+</div>
+<%- include('partials/foot') %>

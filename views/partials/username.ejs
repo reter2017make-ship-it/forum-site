@@ -1,0 +1,1 @@
+<% if (u) { %><a href="/members/<%= encodeURIComponent(u.username) %>/" class="username username--<%= u.role %>"<% if (u.username_color) { %> style="color:<%= u.username_color %>"<% } %>><%= u.username %></a><% } else { %><span class="username"><%= name %></span><% } %>

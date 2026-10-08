@@ -1,0 +1,57 @@
+<%- include('top') %>
+<div class="tiles">
+  <div class="tile"><div class="tile-label">Онлайн сейчас</div><div class="tile-value"><%= online.total %></div><div class="tile-sub">участников <%= online.users.length %>, гостей <%= online.guests %></div></div>
+  <div class="tile"><div class="tile-label">Посетители сегодня</div><div class="tile-value"><%= todayStats.visitors %></div><div class="tile-sub">просмотров <%= todayStats.views %></div></div>
+  <div class="tile"><div class="tile-label">Регистрации сегодня</div><div class="tile-value"><%= todayStats.registrations %></div><div class="tile-sub">всего <%= totals.users %></div></div>
+  <div class="tile"><div class="tile-label">Сообщения сегодня</div><div class="tile-value"><%= todayStats.posts %></div><div class="tile-sub">всего <%= totals.posts %></div></div>
+  <div class="tile"><div class="tile-label">Темы</div><div class="tile-value"><%= totals.threads %></div></div>
+  <div class="tile"><div class="tile-label">Реакции</div><div class="tile-value"><%= totals.reactions %></div></div>
+  <div class="tile"><div class="tile-label">Файлы</div><div class="tile-value"><%= totals.files %></div><div class="tile-sub">загрузок <%= totals.downloads %></div></div>
+  <div class="tile"><div class="tile-label">Активные турниры</div><div class="tile-value"><%= totals.tournaments %></div><div class="tile-sub">заблокировано: <%= totals.banned %></div></div>
+</div>
+
+<div class="block-outer"><div class="tabs" style="background:none;border:0;padding:0">
+  <% [7, 30, 90].forEach(function (d) { %><a href="/admin/?days=<%= d %>" class="<%= range === d ? 'is-active' : '' %>"><%= d %> дней</a><% }) %>
+</div></div>
+<div class="charts">
+  <%- include('chart', { title: 'Уникальные посетители', data: charts.visitors }) %>
+  <%- include('chart', { title: 'Просмотры страниц', data: charts.views }) %>
+  <%- include('chart', { title: 'Регистрации', data: charts.registrations }) %>
+  <%- include('chart', { title: 'Новые сообщения', data: charts.posts }) %>
+</div>
+
+<div class="twoCol">
+  <div class="block"><div class="block-container">
+    <h2 class="block-header">Популярные страницы (<%= range %> дн.)</h2>
+    <table class="dataList"><tr><th>Страница</th><th class="cell-num">Просмотры</th><th class="cell-num">Посетители</th></tr>
+      <% topPages.forEach(function (p) { %><tr><td><a href="<%= p.path %>"><%= p.label || p.path %></a></td><td class="cell-num"><%= p.c %></td><td class="cell-num"><%= p.u %></td></tr><% }) %>
+    </table>
+    <% if (!topPages.length) { %><div class="block-empty">Данных пока нет.</div><% } %>
+  </div></div>
+  <div class="block"><div class="block-container">
+    <h2 class="block-header">Активные разделы (<%= range %> дн.)</h2>
+    <table class="dataList"><tr><th>Раздел</th><th class="cell-num">Сообщения</th></tr>
+      <% topForums.forEach(function (f) { %><tr><td><a href="/f/<%= f.slug %>/"><%= f.title %></a></td><td class="cell-num"><%= f.c %></td></tr><% }) %>
+    </table>
+    <% if (!topForums.length) { %><div class="block-empty">Сообщений за период нет.</div><% } %>
+  </div></div>
+  <div class="block"><div class="block-container">
+    <h2 class="block-header">Самые активные участники (<%= range %> дн.)</h2>
+    <table class="dataList"><tr><th>Участник</th><th class="cell-num">Сообщения</th></tr>
+      <% topPosters.forEach(function (u) { %><tr><td><a href="/members/<%= encodeURIComponent(u.username) %>/"><%= u.username %></a></td><td class="cell-num"><%= u.c %></td></tr><% }) %>
+    </table>
+    <% if (!topPosters.length) { %><div class="block-empty">Сообщений за период нет.</div><% } %>
+  </div></div>
+  <div class="block"><div class="block-container">
+    <h2 class="block-header">Новые пользователи</h2>
+    <table class="dataList"><tr><th>Имя</th><th>E-mail</th><th>Дата</th></tr>
+      <% latestUsers.forEach(function (u) { %><tr><td><a href="/admin/users/<%= u.id %>"><%= u.username %></a></td><td class="u-dim"><%= u.email %></td><td><%= fmt.ago(u.created_at) %></td></tr><% }) %>
+    </table>
+  </div></div>
+  <div class="block"><div class="block-container">
+    <h2 class="block-header">Последние сообщения</h2>
+    <% latestPosts.forEach(function (p) { %><div class="block-row u-small"><a href="/posts/<%= p.id %>/"><b><%= p.title %></b></a> · <%= p.username %> · <%= fmt.ago(p.created_at) %><div class="u-dim"><%= fmt.plain(p.body, 120) %></div></div><% }) %>
+    <% if (!latestPosts.length) { %><div class="block-empty">Сообщений пока нет.</div><% } %>
+  </div></div>
+</div>
+<%- include('bottom') %>

@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<% if (locals.rulesPost) { const p = rulesPost, a = p.author; %>
+<div class="p-title"><h1 class="p-title-value"><%= page.title %></h1></div>
+<div class="p-description">
+  <%- fmt.icon('user') %><% if (a) { %><a href="/members/<%= encodeURIComponent(a.username) %>/"><%= a.username %></a><% } else { %><%= p.username %><% } %>
+  <span class="p-description-sep">·</span><%- fmt.icon('clock') %><span><%= fmt.dmy(p.created_at) %></span>
+</div>
+<div class="notice notice--locked"><%- fmt.icon('lock') %>В этой теме нельзя размещать новые ответы.</div>
+<article class="message">
+  <div class="message-cell message-cell--user">
+    <%- include('partials/avatar', { u: a, name: p.username, size: 'm' }) %>
+    <div>
+      <h4 class="message-name"><%- include('partials/username', { u: a, name: p.username }) %></h4>
+      <% if (a) { %>
+        <div class="userTitle"><%= a.rank %></div>
+        <% a.bannerList.forEach(function (b) { %><span class="userBanner userBanner--<%= b %>"><%= b %></span><% }) %>
+      <% } %>
+    </div>
+    <% if (a) { %>
+      <div class="message-userExtras">
+        <dl><dt>Регистрация</dt><dd><%= fmt.dmy(a.created_at) %></dd></dl>
+        <dl><dt>Посты</dt><dd><%= a.postCount.toLocaleString('en-US') %></dd></dl>
+        <dl><dt>Реакции</dt><dd><%= a.reactionCount.toLocaleString('en-US') %></dd></dl>
+        <% if (a.real_name) { %><dl><dt>Имя</dt><dd><%= a.real_name %></dd></dl><% } %>
+      </div>
+    <% } %>
+  </div>
+  <div class="message-cell message-cell--main">
+    <header class="message-attribution">
+      <span><%= fmt.dmy(p.created_at) %></span>
+      <span class="message-attribution-opposite"><%- fmt.icon('share') %><span>#1</span></span>
+    </header>
+    <div class="message-body"><%- fmt.bbcode(page.body) %></div>
+  </div>
+</article>
+<% } else { %>
+<div class="p-title"><h1 class="p-title-value"><%= page.title %></h1></div>
+<div class="p-body-main">
+  <% if (locals.helpNav) { %>
+  <aside class="p-body-sidebar p-body-sidebar--left">
+    <div class="block"><div class="block-container"><h3 class="block-minorHeader block-minorHeader--strong">Помощь</h3><ul class="listPlain sideNav">
+      <li><a href="/help/" class="<%= currentPath === '/help/' ? 'is-selected' : '' %>">Помощь</a></li>
+      <li><a href="/rules/">Правила</a></li>
+      <li><a href="/help/terms/" class="<%= currentPath.startsWith('/help/terms') ? 'is-selected' : '' %>">Условия использования</a></li>
+      <li><a href="/help/privacy-policy/" class="<%= currentPath.startsWith('/help/privacy') ? 'is-selected' : '' %>">Политика конфиденциальности</a></li>
+    </ul></div></div>
+  </aside>
+  <% } %>
+  <div class="p-body-content">
+    <% if (locals.helpIndex && helpIndex.length) { %>
+      <div class="block"><div class="block-container">
+        <% helpIndex.forEach(function (h) { const url = h.slug === 'rules' ? '/rules/' : '/help/' + h.slug + '/'; const text = String(h.body || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim(); %>
+          <div class="block-row helpRow"><h3 class="helpRow-title"><a href="<%= url %>"><%= h.title %></a></h3><div class="helpRow-desc"><%= text.length > 140 ? text.slice(0, 140) + '…' : text %></div></div>
+        <% }) %>
+      </div></div>
+    <% } %>
+    <% if (page.body && page.body.trim()) { %><div class="block"><div class="block-container"><div class="block-row message-body"><%- fmt.bbcode(page.body) %></div></div></div><% } %>
+  </div>
+</div>
+<% } %>
+<%- include('partials/foot') %>

@@ -1,0 +1,23 @@
+<% const pages = Math.ceil(((t.replies || 0) + 1) / 20); %>
+<div class="structItem<%= t.is_sticky ? ' is-sticky' : '' %>">
+  <div class="structItem-cell structItem-cell--icon"><%- include('avatar', { u: t.user_id ? { username: t.username, avatar: avatars[t.user_id] } : null, name: t.username, size: 's' }) %></div>
+  <div class="structItem-cell structItem-cell--main">
+    <span class="structItem-status"><% if (t.is_featured) { %><span title="Рекомендуемое">⭐</span><% } %><% if (t.is_locked) { %><span title="Закрыта"><%- fmt.icon('lock') %></span><% } %><% if (t.is_sticky) { %><span title="Закреплено">📌</span><% } %></span>
+    <div class="structItem-title">
+      <% if (t.prefix) { %><span class="label <%= t.prefix.css %>"><%= t.prefix.title %></span><% } %><a href="/t/<%= t.id %>/"><%= t.title %></a>
+    </div>
+    <div class="structItem-minor">
+      <span class="structItem-parts"><% if (t.user_id) { %><a href="/members/<%= encodeURIComponent(t.username) %>/"><%= t.username %></a><% } else { %><span><%= t.username %></span><% } %> · <span class="u-dim"><%= fmt.dmy(t.created_at) %></span><% if (locals.showNode && t.node) { %> · <a href="<%= nodeUrl(t.node) %>"><%= t.node.title %></a><% } %></span>
+      <% if (pages > 1) { %><span class="structItem-pageJump"><a href="/t/<%= t.id %>/page-<%= pages %>"><%= pages %></a></span><% } %>
+    </div>
+  </div>
+  <div class="structItem-cell structItem-cell--meta">
+    <dl><dt>Ответы</dt><dd><%= fmt.num(t.replies) %></dd></dl>
+    <dl class="structItem-minor"><dt>Просмотры</dt><dd><%= fmt.num(t.view_count) %></dd></dl>
+  </div>
+  <div class="structItem-cell structItem-cell--latest">
+    <a href="/t/<%= t.id %>/latest" title="Последнее сообщение"><%= fmt.ago(t.last_post_at) %></a>
+    <div class="structItem-minor"><%= t.last_post_username %></div>
+  </div>
+  <div class="structItem-cell structItem-cell--iconEnd"><%- include('avatar', { u: t.last_post_user_id ? { username: t.last_post_username, avatar: avatars[t.last_post_user_id] } : null, name: t.last_post_username, size: 'xxs' }) %></div>
+</div>

@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<style>
+.adm { display: flex; gap: 18px; align-items: flex-start; }
+.adm-nav { width: 220px; flex-shrink: 0; position: sticky; top: 52px; }
+.adm-nav a { display: flex; justify-content: space-between; padding: 8px 12px; color: var(--text); border-top: 1px solid var(--border-light); font-size: 14px; }
+.adm-nav a:first-of-type { border-top: 0; }
+.adm-nav a.is-active { background: var(--accent-soft); color: var(--accent); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
+.adm-nav a:hover { text-decoration: none; background: var(--highlight); }
+.adm-main { flex: 1; min-width: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.tile { background: var(--content-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+.tile-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .3px; }
+.tile-value { font-size: 26px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.tile-sub { font-size: 12px; color: var(--text-dim); }
+.charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.chart { padding: 10px 12px 6px; }
+.chart-title { font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; }
+.chart-total { color: var(--text-dim); font-weight: 400; }
+.chart-plot { display: flex; gap: 6px; margin-top: 8px; }
+.chart-yaxis { display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; color: var(--text-muted); text-align: right; min-width: 22px; height: 130px; line-height: 1; margin-top: -5px; }
+.chart svg { flex: 1; height: 130px; display: block; }
+.chart .bar { rx: 2px; }
+.chart-xaxis { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin: 3px 0 0 28px; }
+.chart .bar { fill: var(--accent); }
+.chart .hit:hover + .bar, .chart .bar:hover { fill: var(--link-hover); }
+.chart .grid { stroke: var(--border-light); stroke-width: 1; }
+.chart details { font-size: 12px; margin-top: 4px; color: var(--text-dim); }
+.twoCol { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px; }
+.inlineForm { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.inlineForm .input { width: auto; }
+@media (max-width: 900px) { .adm { flex-direction: column; } .adm-nav { width: 100%; position: static; } .charts, .twoCol { grid-template-columns: 1fr; } }
+</style>
+<div class="p-title"><h1 class="p-title-value">⚙️ <%= pageTitle %></h1></div>
+<div class="adm">
+  <nav class="adm-nav block-container">
+    <% [['dashboard', '/admin/', '📊 Статистика'], ['nodes', '/admin/nodes', '🗂 Разделы'], ['threads', '/admin/threads', '💬 Темы'], ['posts', '/admin/posts', '📝 Сообщения'],
+        ['users', '/admin/users', '👥 Пользователи'], ['prefixes', '/admin/prefixes', '🏷 Префиксы'], ['files', '/admin/files', '📁 Файлы'], ['tournaments', '/admin/tournaments', '👑 Турниры'],
+        ['big-wins', '/admin/big-wins', '🏆 Большие победы'], ['pages', '/admin/pages', '📄 Страницы'], ['settings', '/admin/settings', '🔧 Настройки'],
+        ['messages', '/admin/messages', '✉️ Обратная связь'], ['log', '/admin/log', '📜 Журнал']].forEach(function (i) { %>
+      <a href="<%= i[1] %>" class="<%= adminSection === i[0] ? 'is-active' : '' %>"><span><%= i[2] %></span><% if (i[0] === 'messages' && unreadMessages) { %><span class="badge"><%= unreadMessages %></span><% } %></a>
+    <% }) %>
+  </nav>
+  <div class="adm-main">

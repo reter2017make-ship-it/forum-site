@@ -1,0 +1,29 @@
+    <% if (breadcrumbs && breadcrumbs.length) { %>
+      <ul class="p-breadcrumbs p-breadcrumbs--bottom">
+        <% breadcrumbs.forEach(function (b, i) { %><li><a href="<%= b.url || nodeUrl(b) %>"><% if (i === 0) { %><%- fmt.icon('home') %><% } %><%= b.title %></a></li><% }) %>
+      </ul>
+    <% } %>
+  </div>
+</div>
+
+<footer class="p-footer">
+  <div class="p-footer-inner">
+    <div class="p-footer-row">
+      <div class="p-footer-row-main">
+        <div class="p-footer-counter"><%- settings.counter_code || '' %></div>
+        <a href="/misc/style?to=<%= encodeURIComponent(currentUrl) %>" class="p-footer-style"><%- fmt.icon('palette') %><%= style === 'old' ? 'Старый' : 'Новый' %></a>
+      </div>
+      <ul class="p-footer-linkList">
+        <li><a href="/help/terms/">Условия использования</a></li>
+        <li><a href="/help/privacy-policy/">Политика конфиденциальности</a></li>
+        <li><a href="/misc/contact">Обратная связь</a></li>
+        <li><a href="/help/">Помощь</a></li>
+      </ul>
+    </div>
+    <% if (settings.footer_text) { %><div class="p-footer-copyright"><%= settings.footer_text %></div><% } %>
+  </div>
+</footer>
+</div>
+<script src="/public/js/app.js?v=4"></script>
+</body>
+</html>

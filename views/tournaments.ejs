@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Турниры</h1></div>
+<div class="block">
+  <div class="block-container">
+    <div class="block-filterBar">
+      <% if (status) { %><span class="filterChip">Статус турнира: <%= TOURNAMENT_STATUS[status] %> <a href="/bitva/<%= sport ? '?sport=' + encodeURIComponent(sport) : '' %>" title="Убрать фильтр">×</a></span><% } %>
+      <% if (sport) { %><span class="filterChip">Вид спорта: <%= sport %> <a href="/bitva/<%= status ? '?status=' + status : '' %>" title="Убрать фильтр">×</a></span><% } %>
+      <details class="filterMenu"><summary>Фильтры</summary>
+        <form class="filterMenu-body" method="get" action="/bitva/">
+          <div class="menu-header">Показать только:</div>
+          <div class="filterMenu-row"><span>Статус турнира:</span><select class="input" name="status"><option value="">(Любой)</option><% Object.entries(TOURNAMENT_STATUS).forEach(function (e) { %><option value="<%= e[0] %>" <%= status === e[0] ? 'selected' : '' %>><%= e[1] %></option><% }) %></select></div>
+          <div class="filterMenu-row"><span>Вид спорта:</span><select class="input" name="sport"><option value="">(Любой)</option><% sports.forEach(function (s) { %><option <%= sport === s ? 'selected' : '' %>><%= s %></option><% }) %></select></div>
+          <div class="filterMenu-foot"><button class="button button--primary button--small">Фильтр</button></div>
+        </form>
+      </details>
+    </div>
+    <% list.forEach(function (t) { %>
+      <div class="fameRow">
+        <div class="fameRow-icon">👑</div>
+        <div class="fameRow-main">
+          <div class="fameRow-title"><a href="/bitva/<%= t.id %>/"><%= t.title %></a> <span class="badge badge--<%= t.status %>"><%= TOURNAMENT_STATUS[t.status] %></span></div>
+          <div class="structItem-minor"><%= t.sport %><%= t.season ? ' · ' + t.season : '' %><%= t.prize ? ' · Призовой фонд: ' + t.prize : '' %></div>
+        </div>
+        <div class="fameRow-meta">
+          <dl><dt>Участники</dt><dd><%= t.members %></dd></dl>
+          <dl><dt>Матчи</dt><dd><%= t.match_count %></dd></dl>
+        </div>
+      </div>
+    <% }) %>
+    <% if (!list.length) { %><div class="block-empty">Нет матчей, соответствующих фильтрам.</div><% } %>
+  </div>
+</div>
+<%- include('partials/foot') %>

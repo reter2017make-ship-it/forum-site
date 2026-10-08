@@ -1,0 +1,20 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Создать тему</h1></div>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" class="block">
+  <input type="hidden" name="_csrf" value="<%= csrf %>"><% if (node.is_game) { %><input type="hidden" name="plain" value="1"><% } %>
+  <div class="block-container">
+    <div class="block-row" style="display:flex;gap:8px">
+      <select class="input" name="prefix_id" style="width:auto">
+        <option value="">(Без префикса)</option>
+        <% prefixes.forEach(function (p) { %><option value="<%= p.id %>" <%= String(form.prefix_id) === String(p.id) ? 'selected' : '' %>><%= p.title %></option><% }) %>
+      </select>
+      <input class="input" name="title" maxlength="150" placeholder="Заголовок темы" value="<%= form.title || '' %>" required>
+    </div>
+    <div class="block-row">
+      <%- include('partials/editor', { id: 'message', value: form.message || '' }) %>
+    </div>
+    <div class="formSubmitRow"><button class="button button--primary" type="submit">Создать тему</button></div>
+  </div>
+</form>
+<%- include('partials/foot') %>

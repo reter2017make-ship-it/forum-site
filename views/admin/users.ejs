@@ -1,0 +1,21 @@
+<%- include('top') %>
+<form method="get" class="block-outer inlineForm">
+  <input class="input" name="q" value="<%= q %>" placeholder="Имя или e-mail">
+  <select class="input" name="role"><option value="">Все</option><% [['admin','Администраторы'],['moderator','Модераторы'],['user','Пользователи'],['banned','Заблокированные']].forEach(function (r) { %><option value="<%= r[0] %>" <%= role === r[0] ? 'selected' : '' %>><%= r[1] %></option><% }) %></select>
+  <button class="button">Найти</button>
+</form>
+<div class="block"><div class="block-container tableWrap"><table class="dataList">
+  <tr><th>Имя</th><th>E-mail</th><th>Роль</th><th class="cell-num">Сообщ.</th><th>Регистрация</th><th>Был</th></tr>
+  <% users.forEach(function (u) { %><tr><td><a href="/admin/users/<%= u.id %>"><b><%= u.username %></b></a> <%= u.is_banned ? '⛔' : '' %></td><td class="u-dim"><%= u.email %></td>
+    <td><%= { admin: 'Администратор', moderator: 'Модератор', user: 'Пользователь' }[u.role] %></td><td class="cell-num"><%= u.posts %></td><td><%= fmt.dmy(u.created_at) %></td><td class="u-small"><%= fmt.ago(u.last_seen) %></td></tr><% }) %>
+</table></div></div>
+<details class="block"><summary class="button">＋ Создать пользователя</summary>
+  <form method="post" action="/admin/users/add" class="block-container" style="margin-top:8px"><input type="hidden" name="_csrf" value="<%= csrf %>">
+    <dl class="formRow"><dt>Имя</dt><dd><input class="input" name="username" required></dd></dl>
+    <dl class="formRow"><dt>E-mail</dt><dd><input class="input" type="email" name="email" required></dd></dl>
+    <dl class="formRow"><dt>Пароль</dt><dd><input class="input" type="password" name="password" minlength="6" required autocomplete="new-password"></dd></dl>
+    <dl class="formRow"><dt>Роль</dt><dd><select class="input" name="role"><option value="user">Пользователь</option><option value="moderator">Модератор</option><option value="admin">Администратор</option></select></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Создать</button></div>
+  </form>
+</details>
+<%- include('bottom') %>

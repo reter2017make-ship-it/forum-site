@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+<div class="p-title">
+  <h1 class="p-title-value"><%= settings.site_name %></h1>
+  <div class="p-title-pageAction">
+    <a class="button" href="/new/" aria-label="Непрочитанное"><%- fmt.icon('bolt') %><span>Непрочитанное</span></a>
+    <a class="button button--green" href="/f/-/create-thread" aria-label="Тема"><%- fmt.icon('edit') %><span>Тема</span></a>
+    <a class="button button--orange" href="/ob/" aria-label="Игра"><%- fmt.icon('university') %><span>Игра</span></a>
+  </div>
+</div>
+<div class="p-body-main">
+  <div class="p-body-content">
+    <% const cats = roots.filter(function (c) { return c.type === 'category'; });
+       const filesAfter = cats.length >= 2 ? cats.length - 2 : cats.length - 1;
+       cats.forEach(function (cat, ci) { %>
+      <div class="block">
+        <div class="block-container">
+          <h2 class="block-header"><a href="<%= nodeUrl(cat) %>"><%= cat.title %></a></h2>
+          <div class="block-body">
+            <% cat.children.forEach(function (n) { %><%- include('partials/node_row', { n }) %><% }) %>
+            <% if (!cat.children.length) { %><div class="block-empty">В этой категории пока нет разделов.</div><% } %>
+          </div>
+        </div>
+      </div>
+      <% if (ci === filesAfter) { %>
+      <div class="block">
+        <div class="block-container">
+          <h3 class="block-minorHeader"><a href="/files/">Полезные файлы:</a></h3>
+          <% if (!side.files.length) { %><div class="block-empty">Файлов пока нет.</div><% } %>
+          <ul class="listPlain fileList">
+            <% side.files.forEach(function (f) { %><li><span class="fileList-icon"><%- fmt.icon('file') %></span><a href="/files/<%= f.id %>/" title="<%= f.tagline || '' %>"><%= f.title %></a></li><% }) %>
+          </ul>
+        </div>
+      </div>
+      <% } %>
+    <% }) %>
+
+    <% if (settings.infoservice_title || settings.infoservice_image) { %>
+    <div class="block">
+      <div class="block-container">
+        <h3 class="block-minorHeader">Инфосервис:</h3>
+        <div class="infoBanner">
+          <% if (fmt.safeUrl(settings.infoservice_image)) { %>
+            <a href="<%= fmt.safeUrl(settings.infoservice_link) || '/info/' %>"><img src="<%= fmt.safeUrl(settings.infoservice_image) %>" alt="<%= settings.infoservice_title %>"></a>
+          <% } else { %>
+            <a class="infoBanner-text" href="<%= fmt.safeUrl(settings.infoservice_link) || '/info/' %>"><b><%= settings.infoservice_title %></b><span><%= settings.infoservice_text %></span></a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="block">
+      <div class="block-container">
+        <h3 class="block-minorHeader">Большие победы:</h3>
+        <% if (side.bigWins.length) { %>
+          <ul class="wins">
+            <% side.bigWins.forEach(function (w) { %>
+              <li>
+                <div class="win-head"><%- fmt.icon('trophy') %><a class="win-title" href="<%= fmt.safeUrl(w.link) || '/game/profit/' %>"><%= w.title %></a><% if (w.win_date) { %><span class="win-date"><%= w.win_date %></span><% } %></div>
+                <div class="win-sum"><%= w.username %> <small>ставка <%= fmt.money(w.stake).replace(' ₽', '₽') %> — выигрыш</small> <b><%= fmt.money(w.payout).replace(' ₽', '₽') %></b></div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %><div class="block-empty">Здесь появятся крупные выигрыши участников.</div><% } %>
+        <div class="block-footer block-footer--right"><a href="/game/profit/">Все профитные игры</a></div>
+      </div>
+    </div>
+  </div>
+  <%- include('partials/sidebar') %>
+</div>
+<%- include('partials/foot') %>

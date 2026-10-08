@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Добавить файл</h1></div>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" action="/files/add" enctype="multipart/form-data" class="block" style="max-width:820px">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Категория</dt><dd><select class="input" name="category_id"><% cats.forEach(function (c) { %><option value="<%= c.id %>"><%= c.title %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Название</dt><dd><input class="input" name="title" maxlength="100" required></dd></dl>
+    <dl class="formRow"><dt>Версия</dt><dd><input class="input" name="version" maxlength="30"></dd></dl>
+    <dl class="formRow"><dt>Кратко</dt><dd><input class="input" name="tagline" maxlength="150"></dd></dl>
+    <dl class="formRow"><dt>Описание</dt><dd><textarea class="input" name="description"></textarea></dd></dl>
+    <dl class="formRow"><dt>Файл</dt><dd><input type="file" name="file" required><div class="formRow-explain">До 50 МБ.</div></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Загрузить</button></div>
+  </div>
+</form>
+<%- include('partials/foot') %>

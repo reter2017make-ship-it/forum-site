@@ -1,0 +1,121 @@
+<%
+  // Как в оригинале: «Правила» — это тема форума (выделен «Форум»), а служебные страницы
+  // (вход, регистрация, помощь, «Что нового?» и т.п.) не выделяют ни одного пункта.
+  const navSel = currentPath.startsWith('/info') ? 'info'
+    : currentPath.startsWith('/bitva') ? 'bitva'
+    : currentPath.startsWith('/files') ? 'files'
+    : /^\/(login|register|help|new|search|account|members|misc|lost-password)(\/|$)/.test(currentPath) ? ''
+    : 'forum';
+  const fullTitle = pageTitle ? pageTitle + ' | ' + settings.site_name : settings.site_name;
+%><!DOCTYPE html>
+<html lang="ru" data-scheme="<%= scheme %>" data-style="<%= style %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="<%= settings.theme_color %>">
+<meta name="description" content="<%= settings.site_description %>">
+<meta name="csrf" content="<%= csrf %>">
+<meta property="og:title" content="<%= fullTitle %>">
+<meta property="og:description" content="<%= settings.site_description %>">
+<meta property="og:site_name" content="<%= settings.site_name %>">
+<title><%= fullTitle %></title>
+<link rel="icon" href="/public/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/public/manifest.webmanifest">
+<link rel="stylesheet" href="/public/css/style.css?v=4">
+<% if (settings.theme_color && settings.theme_color !== '#33354d' && style !== 'old') { %><style>:root:not([data-scheme="dark"]){--brand:<%= settings.theme_color %>}</style><% } %>
+</head>
+<body class="<%= bodyClass %>">
+<div class="p-pageWrapper">
+<%
+  const ico = fmt.icon;
+  const toHere = encodeURIComponent(currentUrl);
+  const navgroup = function (narrow) {
+    let h = '';
+    if (me) {
+      h += '<div class="menu"><button type="button" class="p-navgroup-link" data-menu-trigger aria-haspopup="true" aria-expanded="false" aria-label="' + fmt.esc(me.username) + '">' + include('avatar', { u: me, size: 'xxs', link: false }) + '<span class="p-navgroup-linkText">' + fmt.esc(me.username) + '</span></button>'
+        + '<div class="menu-content"><a href="/members/' + encodeURIComponent(me.username) + '/">Мой профиль</a><a href="/account/">Настройки аккаунта</a>'
+        + (isAdmin ? '<a href="/admin/">⚙️ Панель управления</a>' : '')
+        + '<div class="menu-sep"></div><form method="post" action="/logout/"><input type="hidden" name="_csrf" value="' + csrf + '"><button type="submit">Выход</button></form></div></div>'
+        + '<a href="/new/" class="p-navgroup-link" title="Что нового?">' + ico('bolt') + '<span class="p-navgroup-linkText">Что нового?</span></a>'
+        + '<a href="/search/" class="p-navgroup-link" title="Поиск">' + ico('search') + '<span class="p-navgroup-linkText">Поиск</span></a>';
+    } else {
+      h += '<a href="/login/?to=' + toHere + '" class="p-navgroup-link" aria-label="Вход">' + ico('signin') + '<span class="p-navgroup-linkText">Вход</span></a>'
+        + '<a href="/register/" class="p-navgroup-link p-navgroup-link--hideNarrow" aria-label="Регистрация">' + ico('key') + '<span class="p-navgroup-linkText">Регистрация</span></a>';
+    }
+    h += '<div class="menu"><button type="button" class="p-navgroup-link" data-menu-trigger title="Режим" aria-label="Режим" aria-haspopup="true" aria-expanded="false">' + ico(scheme === 'system' ? 'adjust' : 'toggle') + '</button>'
+      + '<div class="menu-content"><div class="menu-header">Режим</div>'
+      + [['system', 'Системный'], ['light', 'Светлый'], ['dark', 'Тёмный']].map(function (o) { return '<a href="/misc/scheme/' + o[0] + '?to=' + toHere + '" class="' + (scheme === o[0] ? 'is-active' : '') + '">' + o[1] + '</a>'; }).join('')
+      + '</div></div>';
+    return h;
+  };
+  const showNotice = !me && settings.welcome_notice && settings.welcome_notice.trim();
+%>
+<header class="p-header">
+  <div class="p-header-inner">
+    <div class="p-header-content">
+      <div class="p-header-logo"><a href="/"><b><%= settings.logo_main %></b><span><%= settings.logo_suffix %></span></a></div>
+      <div class="p-navgroup"><%- navgroup(false) %></div>
+    </div>
+  </div>
+</header>
+
+<nav class="p-nav">
+  <div class="p-nav-inner">
+    <button type="button" class="p-navgroup-link p-nav-burger" data-offcanvas-open aria-label="Меню"><%- ico('bars') %></button>
+    <a href="/" class="p-nav-smallLogo"><%= settings.logo_main %></a>
+    <ul class="p-nav-list">
+      <li class="p-navEl<%= navSel === 'rules' ? ' is-selected' : '' %>"><a href="/rules/"><span class="p-navEl-emoji">📜</span>Правила</a></li>
+      <li class="p-navEl<%= navSel === 'forum' ? ' is-selected' : '' %>"><a href="/"><span class="p-navEl-emoji">🌐</span>Форум</a></li>
+      <li class="p-navEl<%= navSel === 'info' ? ' is-selected' : '' %>"><a href="/info/"><span class="p-navEl-emoji">🛠️</span>Инфосервис</a></li>
+      <li class="p-navEl<%= navSel === 'bitva' ? ' is-selected' : '' %>">
+        <a href="/bitva/?status=open"><span class="p-navEl-emoji">👑</span>Турниры<span class="p-navEl-caret"><%- ico('caret') %></span></a>
+        <div class="p-navEl-drop"><a href="/bitva/?status=open">Открытые турниры</a><a href="/bitva/">Все турниры</a><a href="/bitva/hall-of-fame">Зал славы</a></div>
+      </li>
+      <li class="p-navEl<%= navSel === 'files' ? ' is-selected' : '' %>"><a href="/files/"><span class="p-navEl-emoji">📁</span>Файлы</a></li>
+    </ul>
+    <div class="p-nav-opposite"><%- navgroup(true) %></div>
+  </div>
+</nav>
+
+<%
+  let sectionLinks = '';
+  if (navSel === 'bitva') sectionLinks = '<a href="/bitva/hall-of-fame" class="' + (currentPath.startsWith('/bitva/hall-of-fame') ? 'is-active' : '') + '">Зал славы</a>';
+  else if (navSel === 'files' && me && !me.is_banned) sectionLinks = '<a href="/files/add">Добавить файл</a>';
+  else if ((navSel === 'forum' || !navSel) && me) sectionLinks = '<a href="/new/">Что нового?</a><a href="/members/">Участники</a>';
+  else if (!navSel) sectionLinks = '<a href="/register/">Регистрация</a>';
+%>
+<div class="p-sectionLinks<%= sectionLinks ? '' : ' p-sectionLinks--empty' %>">
+  <div class="p-sectionLinks-inner"><%- sectionLinks %></div>
+</div>
+
+<div class="offCanvas" id="offCanvas">
+  <div class="offCanvas-backdrop" data-offcanvas-close></div>
+  <div class="offCanvas-panel">
+    <div class="offCanvas-header"><span><%= settings.logo_main %></span><button type="button" data-offcanvas-close aria-label="Закрыть">×</button></div>
+    <a href="/rules/">📜 Правила</a>
+    <a href="/">🌐 Форум</a>
+    <a href="/new/" class="is-sub">Что нового?</a>
+    <a href="/f/-/create-thread" class="is-sub">Создать тему</a>
+    <a href="/info/">🛠️ Инфосервис</a>
+    <a href="/bitva/?status=open">👑 Турниры</a>
+    <a href="/bitva/hall-of-fame" class="is-sub">Зал славы</a>
+    <a href="/files/">📁 Файлы</a>
+    <% if (!me) { %><a href="/login/"><%- ico('signin') %> Вход</a><a href="/register/"><%- ico('key') %> Регистрация</a><% } %>
+  </div>
+</div>
+
+<div class="p-body">
+  <div class="p-body-inner">
+    <% if (showNotice) { %>
+      <div class="p-notice">
+        <div class="p-notice-image"><img src="<%= fmt.safeUrl(settings.notice_image) || '/public/img/notice.svg' %>" alt="" width="48" height="48"></div>
+        <div class="p-notice-content"><%- settings.welcome_notice.replace(/\{site\}/g, settings.site_name).split(/\r?\n-{3,}\r?\n/).map(function (part) { return fmt.bbcode(part.trim()); }).join('<hr>') %></div>
+      </div>
+    <% } %>
+    <% if (flash) { %><div class="notice notice--success"><%= flash %></div><% } %>
+    <% if (me && me.is_banned) { %><div class="notice notice--error">Ваша учётная запись заблокирована<%= me.ban_reason ? ': ' + me.ban_reason : '' %>.</div><% } %>
+    <% if (breadcrumbs && breadcrumbs.length) { %>
+      <ul class="p-breadcrumbs">
+        <% breadcrumbs.forEach(function (b, i) { %><li><a href="<%= b.url || nodeUrl(b) %>"><% if (i === 0) { %><%- ico('home') %><% } %><%= b.title %></a></li><% }) %>
+      </ul>
+    <% } %>

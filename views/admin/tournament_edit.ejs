@@ -1,0 +1,39 @@
+<%- include('top') %>
+<form method="post" action="<%= t.id ? '/admin/tournaments/' + t.id : '/admin/tournaments/add' %>" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Название</dt><dd><input class="input" name="title" value="<%= t.title || '' %>" placeholder="Битва прогнозистов: РПЛ 26/27" required></dd></dl>
+    <dl class="formRow"><dt>Вид спорта / сезон</dt><dd class="inlineForm"><input class="input" name="sport" value="<%= t.sport || '' %>" placeholder="Футбол"><input class="input" name="season" value="<%= t.season || '' %>" placeholder="2026/27"></dd></dl>
+    <dl class="formRow"><dt>Статус</dt><dd><select class="input" name="status"><% Object.entries(TOURNAMENT_STATUS).forEach(function (e) { %><option value="<%= e[0] %>" <%= t.status === e[0] ? 'selected' : '' %>><%= e[1] %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Призовой фонд</dt><dd><input class="input" name="prize" value="<%= t.prize || '' %>" placeholder="10 000 ₽ из Фонда форума"></dd></dl>
+    <dl class="formRow"><dt>Тема турнира</dt><dd><input class="input" name="thread_url" value="<%= t.thread_url || '' %>" placeholder="/t/123/"></dd></dl>
+    <dl class="formRow"><dt>Регламент</dt><dd><textarea class="input" name="description"><%= t.description || '' %></textarea></dd></dl>
+    <dl class="formRow"><dt>Победители</dt><dd class="inlineForm"><input class="input" name="gold" value="<%= t.gold || '' %>" placeholder="🥇 Золото"><input class="input" name="silver" value="<%= t.silver || '' %>" placeholder="🥈 Серебро"><input class="input" name="bronze" value="<%= t.bronze || '' %>" placeholder="🥉 Бронза"></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button><% if (t.id) { %><a class="button" href="/bitva/<%= t.id %>/">Открыть на сайте</a><% } %></div>
+  </div>
+</form>
+<% if (t.id) { %>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Матчи</h2>
+  <% matches.forEach(function (m) { %>
+    <form method="post" action="/admin/matches/<%= m.id %>" class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>">
+      <b style="min-width:240px"><%= m.home %> — <%= m.away %></b><span class="u-small u-muted"><%= fmt.dmy(m.start_at) %> <%= fmt.hm(m.start_at) %> · прогнозов: <%= m.preds %></span>
+      <select class="input" name="result"><option value="">Результата нет</option><% [['1','П1 (победа хозяев)'],['X','Ничья'],['2','П2 (победа гостей)']].forEach(function (o) { %><option value="<%= o[0] %>" <%= m.result === o[0] ? 'selected' : '' %>><%= o[1] %></option><% }) %></select>
+      <button class="button button--small">Сохранить</button><button class="button button--small button--link" name="delete" value="1" style="color:var(--danger)" data-confirm="Удалить матч вместе со всеми прогнозами на него?">Удалить</button>
+    </form>
+  <% }) %>
+  <form method="post" action="/admin/tournaments/<%= t.id %>/matches" class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input class="input" name="home" placeholder="Хозяева" required><input class="input" name="away" placeholder="Гости" required><input class="input" type="datetime-local" name="start_at" required>
+    <button class="button button--small button--primary">＋ Добавить матч</button><span class="u-muted u-small">время московское</span>
+  </form>
+</div></div>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Таблица участников</h2>
+  <table class="dataList"><tr><th>#</th><th>Участник</th><th class="cell-num">Очки</th></tr><% members.forEach(function (r, i) { %><tr><td><%= i + 1 %></td><td><%= r.username %></td><td class="cell-num"><%= r.points %></td></tr><% }) %></table>
+  <% if (!members.length) { %><div class="block-empty">Участников пока нет.</div><% } %>
+  <div class="block-footer inlineForm">
+    <form method="post" action="/admin/tournaments/<%= t.id %>/auto-winners" data-confirm="Записать тройку лидеров в победители и завершить турнир?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--primary">🏆 Завершить и наградить тройку лидеров</button></form>
+    <form method="post" action="/admin/tournaments/<%= t.id %>/delete" data-confirm="Удалить турнир со всеми матчами и прогнозами?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--danger">Удалить турнир</button></form>
+  </div>
+</div></div>
+<% } %>
+<%- include('bottom') %>

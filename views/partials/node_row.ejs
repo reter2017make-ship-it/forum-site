@@ -1,0 +1,39 @@
+<%
+  const isFresh = x => !!(x && x.last && x.last.last_post_at > Math.floor(Date.now() / 1000) - 30 * 86400);
+  const unread = n.type !== 'link' && isFresh(n);
+  const iconName = n.type === 'link' ? 'link' : (n.icon === 'file' || /стат/i.test(n.title) ? 'file' : 'comments');
+  const subs = (n.children || []);
+  const lu = n.last && n.last.lastUser;
+%>
+<div class="node node--<%= n.type %><%= unread ? ' node--unread' : '' %>">
+  <div class="node-body">
+    <span class="node-icon"><i><% if (n.icon && n.icon !== 'file') { %><%= n.icon %><% } else { %><%- fmt.icon(iconName) %><% } %></i></span>
+    <div class="node-main">
+      <h3 class="node-title"><a href="<%= nodeUrl(n) %>"><%= n.title %></a></h3>
+      <% if (subs.length) { %>
+        <ul class="node-subNodes">
+          <% subs.forEach(function (c) { const ci = c.type === 'link' ? 'link' : (subs.length === 1 ? 'search' : 'comments'); %>
+            <li class="<%= c.type !== 'link' && isFresh(c) ? 'is-unread' : '' %>"><a href="<%= nodeUrl(c) %>" title="<%= c.title %>"><%- fmt.icon(ci) %><span><%= c.title %></span></a></li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+    <% if (n.type !== 'link') { %>
+    <div class="node-extra">
+      <% if (n.last) { %>
+        <%- include('avatar', { u: lu ? { username: lu.username, avatar: lu.avatar } : null, name: n.last.last_post_username, size: 'xs', link: true }) %>
+        <div class="node-extra-main">
+          <div class="node-extra-row"><% if (n.last.prefix) { %><span class="label <%= n.last.prefix.css %>"><%= n.last.prefix.title %></span><% } %><a class="node-extra-title" href="/t/<%= n.last.id %>/latest" title="<%= n.last.title %>"><%= n.last.title %></a></div>
+          <div class="node-extra-row node-extra-meta"><a href="/t/<%= n.last.id %>/latest"><%= fmt.ago(n.last.last_post_at) %></a> · <%- include('username', { u: lu, name: n.last.last_post_username }) %></div>
+        </div>
+      <% } else { %>
+        <span class="node-extra-placeholder">Нет</span>
+      <% } %>
+    </div>
+    <div class="node-stats">
+      <dl><dt>Темы</dt><dd><%= fmt.num(n.threads) %></dd></dl>
+      <dl><dt>Посты</dt><dd><%= fmt.num(n.posts) %></dd></dl>
+    </div>
+    <% } %>
+  </div>
+</div>

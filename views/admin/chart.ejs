@@ -1,0 +1,19 @@
+<% const W = 600, H = 130, max = Math.max(1, ...data.map(d => d.c)); const step = W / data.length; const bw = Math.max(2, step - 2);
+   const total = data.reduce((s, d) => s + d.c, 0); const nice = Math.max(4, Math.ceil(max / 4) * 4); const fd = d => d.split('-').reverse().slice(0, 2).join('.'); %>
+<div class="block-container chart">
+  <div class="chart-title"><span><%= title %></span><span class="chart-total">всего: <%= total.toLocaleString('ru-RU') %></span></div>
+  <div class="chart-plot">
+    <div class="chart-yaxis"><span><%= nice %></span><span><%= nice / 2 %></span><span>0</span></div>
+    <svg viewBox="0 0 <%= W %> <%= H %>" preserveAspectRatio="none" role="img" aria-label="<%= title %> по дням">
+      <% [0, 0.5, 1].forEach(function (g) { const y = H - H * g; %><line class="grid" x1="0" x2="<%= W %>" y1="<%= y %>" y2="<%= y %>" vector-effect="non-scaling-stroke"/><% }) %>
+      <% data.forEach(function (d, i) { const h = d.c ? Math.max(3, H * d.c / nice) : 0; const x = i * step + 1; %>
+        <g><title><%= d.d.split('-').reverse().join('.') %>: <%= d.c %></title>
+          <rect class="hit" x="<%= i * step %>" y="0" width="<%= step %>" height="<%= H %>" fill="transparent"/>
+          <% if (h) { %><rect class="bar" x="<%= x %>" y="<%= H - h %>" width="<%= bw %>" height="<%= h %>"/><% } %>
+        </g>
+      <% }) %>
+    </svg>
+  </div>
+  <div class="chart-xaxis"><span><%= fd(data[0].d) %></span><span><%= fd(data[Math.floor(data.length / 2)].d) %></span><span><%= fd(data[data.length - 1].d) %></span></div>
+  <details><summary>Таблица</summary><table class="dataList"><% data.slice().reverse().forEach(function (d) { %><tr><td><%= d.d.split('-').reverse().join('.') %></td><td class="cell-num"><%= d.c %></td></tr><% }) %></table></details>
+</div>

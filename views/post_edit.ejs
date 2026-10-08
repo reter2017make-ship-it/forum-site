@@ -1,0 +1,10 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Редактирование сообщения</h1></div>
+<div class="p-description">Тема: <a href="/t/<%= thread.id %>/"><%= thread.title %></a></div>
+<form method="post" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <div class="block-row"><%- include('partials/editor', { id: 'message', value: post.body }) %></div>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button><a class="button" href="/posts/<%= post.id %>/">Отмена</a></div>
+  </div>
+</form>
+<%- include('partials/foot') %>

@@ -1,0 +1,17 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Поиск</h1></div>
+<form class="block" method="get" action="/search/"><div class="block-container"><div class="block-row" style="display:flex;gap:8px">
+  <input class="input" name="q" value="<%= q %>" placeholder="Что ищем?" autofocus required minlength="2"><button class="button button--primary">Найти</button>
+</div></div></form>
+<% if (q) { %>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Результаты: <%= results.length %></h2>
+  <% results.forEach(function (r) { %>
+    <div class="block-row"><a href="/posts/<%= r.id %>/"><b><%= r.title %></b></a>
+      <div class="u-small u-muted"><%= r.username %> · <%= fmt.ago(r.created_at) %></div>
+      <div class="u-small"><%= fmt.plain(r.body, 240) %></div></div>
+  <% }) %>
+  <% if (!results.length) { %><div class="block-empty">Ничего не найдено.</div><% } %>
+</div></div>
+<% } %>
+<%- include('partials/foot') %>

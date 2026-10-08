@@ -1,0 +1,34 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Зал славы</h1></div>
+<div class="block">
+  <div class="block-container">
+    <div class="block-filterBar">
+      <% if (sport) { %><span class="filterChip">Вид спорта: <%= sport %> <a href="?<%= season ? 'season=' + encodeURIComponent(season) : '' %>" title="Убрать фильтр">×</a></span><% } %>
+      <% if (season) { %><span class="filterChip">Сезон: <%= season %> <a href="?<%= sport ? 'sport=' + encodeURIComponent(sport) : '' %>" title="Убрать фильтр">×</a></span><% } %>
+      <details class="filterMenu"><summary>Фильтры</summary>
+        <form class="filterMenu-body" method="get">
+          <div class="menu-header">Показать только:</div>
+          <div class="filterMenu-row"><span>Вид спорта:</span><select class="input" name="sport"><option value="">(Любой)</option><% sports.forEach(function (s) { %><option <%= sport === s ? 'selected' : '' %>><%= s %></option><% }) %></select></div>
+          <div class="filterMenu-row"><span>Сезон:</span><select class="input" name="season"><option value="">(Любой)</option><% seasons.forEach(function (s) { %><option <%= season === s ? 'selected' : '' %>><%= s %></option><% }) %></select></div>
+          <div class="filterMenu-foot"><button class="button button--primary button--small">Фильтр</button></div>
+        </form>
+      </details>
+    </div>
+    <% list.forEach(function (t) { %>
+      <div class="fameRow">
+        <div class="fameRow-icon">🏆</div>
+        <div class="fameRow-main">
+          <div class="fameRow-title"><a href="/bitva/<%= t.id %>/"><%= t.title %></a></div>
+          <div class="structItem-minor"><%= t.sport %><%= t.season ? ' · ' : '' %><span class="u-dim"><%= t.season %></span></div>
+        </div>
+        <div class="fameRow-meta">
+          <% [['Золото', t.gold], ['Серебро', t.silver], ['Бронза', t.bronze]].forEach(function (m) { %>
+            <dl><dt><%= m[0] %></dt><dd><% if (m[1] && m[1] !== '—') { %><% if (members.has(m[1])) { %><a href="/members/<%= encodeURIComponent(m[1]) %>/"><%= m[1] %></a><% } else { %><%= m[1] %><% } %><% } else { %>Н/Д<% } %></dd></dl>
+          <% }) %>
+        </div>
+      </div>
+    <% }) %>
+    <% if (!list.length) { %><div class="block-empty">Нет турниров, соответствующих фильтрам.</div><% } %>
+  </div>
+</div>
+<%- include('partials/foot') %>

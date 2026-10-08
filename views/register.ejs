@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Регистрация</h1></div>
+<% if (settings.registration_open !== '1') { %><div class="notice notice--warning">Регистрация временно закрыта.</div><% } %>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" action="/register/" class="block">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow formRow--input"><dt><label for="r-name">Имя пользователя:</label><span class="formRow-hint">Обязательно</span></dt><dd><input class="input" id="r-name" name="username" value="<%= form.username || '' %>" maxlength="30" autocomplete="username" required><div class="formRow-explain">Это имя будет отображаться в Ваших сообщениях. Изменить его потом сможет только администрация.</div></dd></dl>
+    <dl class="formRow formRow--input"><dt><label for="r-email">Электронная почта:</label><span class="formRow-hint">Обязательно</span></dt><dd><input class="input" id="r-email" type="email" name="email" value="<%= form.email || '' %>" autocomplete="email" required></dd></dl>
+    <dl class="formRow formRow--input"><dt><label for="r-pass">Пароль:</label><span class="formRow-hint">Обязательно</span></dt><dd><input class="input" id="r-pass" type="password" name="password" autocomplete="new-password" minlength="6" required><div class="formRow-explain">Не менее 6 символов.</div></dd></dl>
+    <dl class="formRow formRow--input"><dt><label for="r-pass2">Повторите пароль:</label><span class="formRow-hint">Обязательно</span></dt><dd><input class="input" id="r-pass2" type="password" name="password2" autocomplete="new-password" minlength="6" required></dd></dl>
+    <dl class="formRow"><dt></dt><dd><label><input type="checkbox" name="agree" value="1" required <%= form.agree ? 'checked' : '' %>> Я согласен(на) с <a href="/rules/" target="_blank">правилами форума</a> и <a href="/help/privacy-policy/" target="_blank">политикой конфиденциальности</a>.</label></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Зарегистрироваться</button></div>
+  </div>
+</form>
+<%- include('partials/foot') %>

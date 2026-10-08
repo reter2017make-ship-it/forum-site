@@ -1,0 +1,21 @@
+<%- include('top') %>
+<form method="get" class="block-outer inlineForm">
+  <input class="input" name="q" value="<%= q %>" placeholder="Название или автор">
+  <select class="input" name="node"><option value="">Все разделы</option><% forums.forEach(function (f) { %><option value="<%= f.id %>" <%= nodeId === f.id ? 'selected' : '' %>><%= f.title %></option><% }) %></select>
+  <button class="button">Найти</button><span class="u-muted u-small">Найдено: <%= total %></span>
+</form>
+<form method="post" action="/admin/threads/bulk" class="block" data-require-checked="ids" data-confirm="Применить действие к выбранным темам?"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container tableWrap"><table class="dataList">
+    <tr><th><input type="checkbox" data-check-all="ids"></th><th>Тема</th><th>Раздел</th><th>Автор</th><th class="cell-num">Сообщ.</th><th class="cell-num">Просм.</th><th>Последнее</th></tr>
+    <% threads.forEach(function (t) { %><tr><td><input type="checkbox" name="ids" value="<%= t.id %>"></td>
+      <td><a href="/t/<%= t.id %>/"><%= t.title %></a> <%= t.is_sticky ? '📌' : '' %><%= t.is_locked ? '🔒' : '' %></td><td class="u-dim"><%= t.node_title %></td><td><%= t.username %></td>
+      <td class="cell-num"><%= t.posts %></td><td class="cell-num"><%= t.view_count %></td><td class="u-small"><%= fmt.ago(t.last_post_at) %></td></tr><% }) %>
+  </table><% if (!threads.length) { %><div class="block-empty">Тем нет.</div><% } %></div>
+  <div class="block-outer inlineForm" style="margin-top:8px">
+    <select class="input" name="action"><option value="sticky">Закрепить / открепить</option><option value="lock">Закрыть / открыть</option><option value="move">Переместить в…</option><option value="delete">Удалить</option></select>
+    <select class="input" name="node_id"><% forums.forEach(function (f) { %><option value="<%= f.id %>"><%= f.title %></option><% }) %></select>
+    <button class="button button--primary">Применить</button>
+    <span class="u-muted u-small">Стр. <%= page %> из <%= pages %> <% if (page > 1) { %><a href="?q=<%= encodeURIComponent(q) %>&node=<%= nodeId || '' %>&page=<%= page - 1 %>">‹</a><% } %> <% if (page < pages) { %><a href="?q=<%= encodeURIComponent(q) %>&node=<%= nodeId || '' %>&page=<%= page + 1 %>">›</a><% } %></span>
+  </div>
+</form>
+<%- include('bottom') %>

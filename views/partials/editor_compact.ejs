@@ -1,0 +1,25 @@
+<% const nm = locals.name || id; const ph = locals.placeholder || ''; const rows = locals.rows || 10; %>
+<div class="xEditor">
+  <div class="editorToolbar editorToolbar--compact" data-editor="<%= id %>">
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Смайлы" aria-label="Смайлы"><%- fmt.icon('smile') %></button>
+      <div class="menu-content editorMenu editorMenu--emoji"><% ['😀','😂','😉','😎','🤔','😡','😢','👍','👎','🔥','💯','🎯','🍀','🚀','🏆','⚽','🏒','🏀','🎾','💰'].forEach(function (e) { %><button type="button" data-tag="emoji"><%= e %></button><% }) %></div></div>
+    <button type="button" data-tag="b" title="Жирный" aria-label="Жирный"><%- fmt.icon('bold') %></button>
+    <button type="button" data-tag="url" title="Ссылка" aria-label="Ссылка"><%- fmt.icon('link') %></button>
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Размер шрифта" aria-label="Размер шрифта" class="editorToolbar-drop"><%- fmt.icon('textsize') %><%- fmt.icon('caret', 'ico--caret') %></button>
+      <div class="menu-content editorMenu"><% [[1, 10], [2, 12], [3, 15], [4, 18], [5, 22], [6, 26], [7, 32]].forEach(function (s) { %><button type="button" data-tag="size" data-val="<%= s[0] %>" style="font-size:<%= Math.min(s[1], 26) %>px"><%= s[1] %></button><% }) %></div></div>
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Цвет текста" aria-label="Цвет текста"><%- fmt.icon('palette') %></button>
+      <div class="menu-content editorMenu editorMenu--colors"><% ['#e03e2d','#e67e23','#f1c40f','#2dc26b','#169179','#3598db','#236fa1','#8e44ad','#843fa1','#ced4d9','#95a5a6','#000000'].forEach(function (c) { %><button type="button" data-tag="color" data-val="<%= c %>" style="background:<%= c %>" title="<%= c %>" aria-label="<%= c %>"></button><% }) %></div></div>
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Оформление текста" aria-label="Оформление текста"><%- fmt.icon('dots') %></button>
+      <div class="menu-content editorMenu"><button type="button" data-tag="i"><i>Курсив</i></button><button type="button" data-tag="u"><u>Подчёркнутый</u></button><button type="button" data-tag="s"><s>Зачёркнутый</s></button></div></div>
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Абзац" aria-label="Абзац"><%- fmt.icon('dots') %></button>
+      <div class="menu-content editorMenu"><button type="button" data-tag="list">Список</button><button type="button" data-tag="center">По центру</button></div></div>
+    <span class="editorToolbar-gap"></span>
+    <button type="button" data-tag="clear" title="Убрать форматирование" aria-label="Убрать форматирование"><%- fmt.icon('eraser') %></button>
+    <div class="menu"><button type="button" data-menu-trigger aria-haspopup="true" aria-expanded="false" title="Вставить" aria-label="Вставить"><%- fmt.icon('dots') %></button>
+      <div class="menu-content editorMenu"><button type="button" data-tag="img">Изображение</button><button type="button" data-tag="quote">Цитата</button><button type="button" data-tag="spoiler">Спойлер</button></div></div>
+    <span class="editorToolbar-sep"></span>
+    <button type="button" data-preview="<%= id %>" title="Предпросмотр" aria-label="Предпросмотр" aria-pressed="false"><%- fmt.icon('preview') %></button>
+  </div>
+  <textarea class="input" id="<%= id %>" name="<%= nm %>" rows="<%= rows %>" placeholder="<%= ph %>" required><%= locals.value || '' %></textarea>
+  <div class="editorPreview message-body" id="preview-<%= id %>" hidden></div>
+</div>

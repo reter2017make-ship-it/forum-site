@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Выбор стиля</h1></div>
+<div class="block" style="max-width:520px"><div class="block-container">
+  <% [['new', 'Новый'], ['old', 'Старый']].forEach(function (s) { %>
+    <form method="post" action="/misc/style" class="block-row" style="display:flex;justify-content:space-between;align-items:center">
+      <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="style" value="<%= s[0] %>"><input type="hidden" name="to" value="<%= locals.to || '/' %>">
+      <span><%= s[1] %><% if (style === s[0]) { %> <span class="badge badge--muted">выбран</span><% } %></span>
+      <button class="button button--small">Выбрать</button>
+    </form>
+  <% }) %>
+  <div class="block-footer">Режим (светлый, тёмный, системный) переключается в шапке сайта.</div>
+</div></div>
+<%- include('partials/foot') %>

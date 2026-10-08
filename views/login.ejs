@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Вход</h1></div>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" action="/login/" class="block">
+  <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="to" value="<%= to %>">
+  <div class="block-container">
+    <dl class="formRow formRow--input"><dt><label for="f-login">Имя пользователя или email:</label></dt><dd><input class="input" id="f-login" name="login" value="<%= form.login || '' %>" autocomplete="username" required autofocus></dd></dl>
+    <dl class="formRow formRow--input"><dt><label for="f-pass">Пароль:</label></dt><dd>
+      <div class="inputGroup"><input class="input" id="f-pass" type="password" name="password" autocomplete="current-password" required><label class="inputGroup-text" tabindex="0" role="button" aria-controls="f-pass" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" onclick="var i=document.getElementById('f-pass');i.type=i.type==='password'?'text':'password';this.lastChild.textContent=i.type==='password'?' Показать':' Скрыть'">👁<span> Показать</span></label></div>
+      <div class="formRow-explain"><a href="/misc/contact">Забыли свой пароль?</a></div>
+    </dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary"><%- fmt.icon('lock') %> Войти</button></div>
+  </div>
+  <div class="formAfter">У Вас ещё нет учётной записи? <a class="button button--small" href="/register/">Зарегистрируйтесь</a></div>
+</form>
+<%- include('partials/foot') %>

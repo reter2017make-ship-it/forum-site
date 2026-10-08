@@ -1,0 +1,105 @@
+<%- include('partials/head') %>
+<div class="p-title">
+  <h1 class="p-title-value"><% if (thread.prefix) { %><span class="label <%= thread.prefix.css %>"><%= thread.prefix.title %></span><% } %><%= thread.title %></h1>
+</div>
+<div class="p-description">
+  <%- fmt.icon('user') %><% if (thread.user_id) { %><a href="/members/<%= encodeURIComponent(thread.username) %>/"><%= thread.username %></a><% } else { %><span><%= thread.username %></span><% } %>
+  <span class="p-description-sep">·</span><%- fmt.icon('clock') %><a href="/t/<%= thread.id %>/"><%= fmt.dmy(thread.created_at) %></a>
+  <% if (thread.is_sticky) { %><span class="p-description-sep">·</span>📌 Закреплено<% } %>
+</div>
+<% if (thread.is_locked) { %><div class="notice notice--locked"><%- fmt.icon('lock') %>В этой теме нельзя размещать новые ответы.</div><% } %>
+
+<% if (isStaff) { %>
+<details class="block"><summary class="button button--small" style="margin-bottom:4px">🛠 Модерация темы</summary>
+  <div class="block-container" style="margin-top:8px;padding:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <% [['sticky', thread.is_sticky ? 'Открепить' : 'Закрепить'], ['lock', thread.is_locked ? 'Открыть' : 'Закрыть'], ['feature', thread.is_featured ? 'Убрать из рекомендуемых' : 'Рекомендовать']].forEach(function (a) { %>
+      <form method="post" action="/t/<%= thread.id %>/moderate"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="action" value="<%= a[0] %>"><button class="button button--small"><%= a[1] %></button></form>
+    <% }) %>
+    <form method="post" action="/t/<%= thread.id %>/moderate" style="display:flex;gap:4px"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="action" value="move">
+      <select class="input" name="node_id" style="width:auto"><% forums.forEach(function (f) { %><option value="<%= f.id %>" <%= f.id === thread.node_id ? 'selected' : '' %>><%= f.title %></option><% }) %></select><button class="button button--small">Переместить</button></form>
+    <form method="post" action="/t/<%= thread.id %>/moderate" style="display:flex;gap:4px;flex:1;min-width:260px"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="action" value="edit">
+      <select class="input" name="prefix_id" style="width:auto"><option value="">Без префикса</option><% prefixes.forEach(function (p) { %><option value="<%= p.id %>" <%= p.id === thread.prefix_id ? 'selected' : '' %>><%= p.title %></option><% }) %></select>
+      <input class="input" name="title" value="<%= thread.title %>"><button class="button button--small">Сохранить</button></form>
+    <form method="post" action="/t/<%= thread.id %>/moderate" data-confirm="Удалить тему целиком?"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="action" value="delete"><button class="button button--small button--danger">Удалить тему</button></form>
+  </div>
+</details>
+<% } %>
+
+<div class="block-outer"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+
+<% posts.forEach(function (p) { const a = p.author; %>
+<article class="message" id="post-<%= p.id %>">
+  <div class="message-cell message-cell--user">
+    <%- include('partials/avatar', { u: a, name: p.username, size: 'm' }) %>
+    <div>
+      <h4 class="message-name"><%- include('partials/username', { u: a, name: p.username }) %></h4>
+      <% if (a) { %>
+        <div class="userTitle"><%= a.rank %></div>
+        <% a.bannerList.forEach(function (b) { %><span class="userBanner userBanner--<%= b %>"><%= b %></span><% }) %>
+      <% } %>
+    </div>
+    <% if (a) { %>
+      <div class="message-userExtras">
+        <dl><dt>Регистрация</dt><dd><%= fmt.dmy(a.created_at) %></dd></dl>
+        <dl><dt>Посты</dt><dd><%= a.postCount.toLocaleString('en-US') %></dd></dl>
+        <dl><dt>Реакции</dt><dd><%= a.reactionCount.toLocaleString('en-US') %></dd></dl>
+        <% if (a.real_name) { %><dl><dt>Имя</dt><dd><%= a.real_name %></dd></dl><% } %>
+        <% if (a.location) { %><dl><dt>Город</dt><dd><%= a.location %></dd></dl><% } %>
+      </div>
+    <% } %>
+  </div>
+  <div class="message-cell message-cell--main">
+    <header class="message-attribution">
+      <a href="/posts/<%= p.id %>/" title="<%= fmt.fullDate(p.created_at) %>"><%= fmt.dmy(p.created_at) %></a>
+      <span class="message-attribution-opposite"><a href="/posts/<%= p.id %>/" data-share title="Поделиться"><%- fmt.icon('share') %></a><a href="/posts/<%= p.id %>/">#<%= p.position %></a></span>
+    </header>
+    <div class="message-body"><%- fmt.bbcode(p.body) %></div>
+    <% if (p.edited_at) { %><div class="message-edited">Последнее редактирование: <%= fmt.ago(p.edited_at) %></div><% } %>
+    <% if (me && !me.is_banned && (!thread.is_locked || isStaff)) { %><textarea id="raw-<%= p.id %>" hidden><%= p.body %></textarea><% } %>
+    <footer class="message-footer">
+      <div class="message-actionBar">
+        <div class="actionBar-set">
+          <% if (me && !me.is_banned && p.user_id !== me.id) { %>
+            <span class="reactPicker">
+              <button type="button" class="actionBar-action<%= p.myReaction ? ' is-active' : '' %>" id="react-trigger-<%= p.id %>" data-react="<%= p.myReaction || settings.reactionsList[0] %>" data-post="<%= p.id %>"><%= p.myReaction ? p.myReaction + ' Реакция' : '👍 Нравится' %></button>
+              <span class="reactPicker-list"><% settings.reactionsList.forEach(function (e) { %><button type="button" data-react="<%= e %>" data-post="<%= p.id %>" title="<%= e %>"><%= e %></button><% }) %></span>
+            </span>
+          <% } %>
+          <% if (me && !me.is_banned && (!thread.is_locked || isStaff)) { %>
+            <a href="#message" class="actionBar-action" data-quote="<%= p.id %>" data-author="<%= p.username %>"><%- fmt.icon('reply') %> Ответ</a>
+            <a href="#message" class="actionBar-action" data-mention="<%= p.username %>">@</a>
+          <% } %>
+        </div>
+        <div class="actionBar-set">
+          <% if (me && (isStaff || p.user_id === me.id) && !me.is_banned) { %>
+            <a class="actionBar-action" href="/posts/<%= p.id %>/edit">Изменить</a>
+            <% if (!p.isFirst || isStaff) { %>
+            <form method="post" action="/posts/<%= p.id %>/delete" data-confirm="<%= p.isFirst ? 'Это первое сообщение: будет удалена вся тема. Продолжить?' : 'Удалить сообщение?' %>" style="display:inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="actionBar-action">Удалить</button></form>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
+      <div class="reactionsBar" id="reactions-<%= p.id %>"><% if (p.reactions.length) {
+        const em = [...new Set(p.reactions.map(r => r.emoji))].join('');
+        const names = p.reactions.map(r => r.username); %><span class="reactionsBar-emoji"><%= em %></span> <%= names.slice(0, 3).join(', ') %><%= names.length > 3 ? ' и ещё ' + (names.length - 3) : '' %><% } %></div>
+    </footer>
+  </div>
+</article>
+<% }) %>
+
+<div class="block-outer"><%- include('partials/pagenav', { pg, baseUrl }) %></div>
+
+<% if (me && !me.is_banned && (!thread.is_locked || isStaff)) { %>
+<form class="message" method="post" action="/t/<%= thread.id %>/reply">
+  <div class="message-cell message-cell--user"><%- include('partials/avatar', { u: me, size: 'm', link: false }) %></div>
+  <div class="message-cell message-cell--main" style="padding:12px">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <%- include('partials/editor', { id: 'message' }) %>
+    <div style="margin-top:8px;text-align:right"><button class="button button--primary" type="submit">↩ Ответить</button></div>
+  </div>
+</form>
+<% } else if (thread.is_locked) { %>
+<% } else if (!me) { %>
+<div class="notice">Чтобы ответить, <a href="/login/?to=<%= encodeURIComponent(currentUrl) %>">войдите</a> или <a href="/register/">зарегистрируйтесь</a>.</div>
+<% } %>
+<%- include('partials/foot') %>

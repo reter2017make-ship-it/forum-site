@@ -1,0 +1,8 @@
+<%- include('top') %>
+<div class="block"><div class="block-container"><table class="dataList">
+  <tr><th>Страница</th><th>Адрес</th></tr>
+  <% const urls = { rules: '/rules/', terms: '/help/terms/', 'privacy-policy': '/help/privacy-policy/', help: '/help/', info: '/info/' }; pages.forEach(function (p) { %>
+    <tr><td><a href="/admin/pages/<%= p.slug %>"><b><%= p.title %></b></a></td><td><a href="<%= urls[p.slug] %>" class="u-dim"><%= urls[p.slug] %></a></td></tr>
+  <% }) %>
+</table></div></div>
+<%- include('bottom') %>

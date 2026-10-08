@@ -1,0 +1,20 @@
+<%- include('top') %>
+<form method="post" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Тип</dt><dd><select class="input" name="type"><% [['category','Категория'],['forum','Раздел форума'],['link','Ссылка']].forEach(function (t) { %><option value="<%= t[0] %>" <%= node.type === t[0] ? 'selected' : '' %>><%= t[1] %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Название</dt><dd><input class="input" name="title" value="<%= node.title || '' %>" required></dd></dl>
+    <dl class="formRow"><dt>Адрес (slug)</dt><dd><input class="input" name="slug" value="<%= node.slug || '' %>" pattern="[A-Za-z0-9][A-Za-z0-9_-]*" required><div class="formRow-explain">Латиница, цифры, дефис. Раздел будет доступен по адресу /f/адрес/, категория по /c/адрес/.</div></dd></dl>
+    <dl class="formRow"><dt>Описание</dt><dd><textarea class="input" name="description" style="min-height:70px"><%= node.description || '' %></textarea></dd></dl>
+    <dl class="formRow"><dt>Родитель</dt><dd><select class="input" name="parent_id"><option value="">(Верхний уровень)</option><% parents.forEach(function (p) { %><option value="<%= p.id %>" <%= node.parent_id === p.id ? 'selected' : '' %>><%= p.type === 'category' ? '🗂 ' : '— ' %><%= p.title %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Ссылка (для типа «Ссылка»)</dt><dd><input class="input" name="link_url" value="<%= node.link_url || '' %>" placeholder="/f/discuss/ или https://..."></dd></dl>
+    <dl class="formRow"><dt>Иконка (эмодзи)</dt><dd><input class="input" name="icon" value="<%= node.icon || '' %>" style="width:100px"><div class="formRow-explain">Оставьте пустым для стандартной иконки.</div></dd></dl>
+    <dl class="formRow"><dt>Порядок</dt><dd><input class="input" type="number" name="display_order" value="<%= node.display_order || 0 %>" style="width:120px"></dd></dl>
+    <dl class="formRow"><dt></dt><dd><label><input type="checkbox" name="staff_only_post" value="1" <%= node.staff_only_post ? 'checked' : '' %>> Темы создаёт только администрация</label></dd></dl>
+    <dl class="formRow"><dt>Игровой раздел</dt><dd><label><input type="checkbox" name="is_game" value="1" <%= node.is_game ? 'checked' : '' %>> Вместо обычной темы кнопка «Игра» и форма: тираж, начало, схема, события, список игроков</label><div class="formRow-explain">Заголовок темы собирается сам: «№тиража: дд.мм.гг в чч:мм [схема]».</div></dd></dl>
+    <dl class="formRow"><dt>Схемы игры</dt><dd><input class="input" name="game_schemes" value="<%= node.game_schemes || '' %>" placeholder="купон, пакет, Б14"><div class="formRow-explain">Варианты списка «схема» через запятую.</div></dd></dl>
+    <dl class="formRow"><dt>Префикс игровых тем</dt><dd><select class="input" name="game_prefix_id"><option value="">(Без префикса)</option><% prefixes.forEach(function (p) { %><option value="<%= p.id %>" <%= node.game_prefix_id === p.id ? 'selected' : '' %>><%= p.title %></option><% }) %></select></dd></dl>
+    <dl class="formRow"><dt>Памятка над формой игры</dt><dd><textarea class="input" name="game_notice" style="min-height:110px"><%= node.game_notice || '' %></textarea><div class="formRow-explain">BBCode: [b]жирный[/b]. Пустая — памятки нет.</div></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button><a class="button" href="/admin/nodes">Отмена</a></div>
+  </div>
+</form>
+<%- include('bottom') %>

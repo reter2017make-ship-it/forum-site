@@ -1,0 +1,29 @@
+<%- include('partials/head') %>
+<div class="block"><div class="block-container">
+  <div class="memberHeader">
+    <%- include('partials/avatar', { u, size: 'l', link: false }) %>
+    <div class="memberHeader-main">
+      <h1 class="memberHeader-name"><span class="username username--<%= u.role %>"<% if (u.username_color) { %> style="color:<%= u.username_color %>"<% } %>><%= u.username %></span></h1>
+      <div class="userTitle" style="font-size:14px"><%= u.rank %></div>
+      <% u.bannerList.forEach(function (b) { %><span class="userBanner userBanner--<%= b %>"><%= b %></span> <% }) %>
+      <% if (u.is_banned) { %><div class="notice notice--error" style="margin-top:8px">Заблокирован</div><% } %>
+      <div class="u-small u-dim" style="margin-top:6px"><% if (u.real_name) { %><%= u.real_name %> · <% } %><% if (u.location) { %><%= u.location %> · <% } %>Был на форуме: <%= fmt.ago(u.last_seen) %></div>
+      <div class="memberHeader-stats">
+        <dl><dt>Сообщения</dt><dd><%= u.postCount %></dd></dl>
+        <dl><dt>Реакции</dt><dd><%= u.reactionCount %></dd></dl>
+        <dl><dt>Регистрация</dt><dd><%= fmt.dmy(u.created_at) %></dd></dl>
+        <% if (medals.length) { %><dl><dt>Награды</dt><dd><% medals.forEach(function (m) { %><span title="<%= m.title %>"><%= m.gold === u.username ? '🥇' : m.silver === u.username ? '🥈' : '🥉' %></span><% }) %></dd></dl><% } %>
+      </div>
+    </div>
+    <% if (isAdmin) { %><a class="button button--small" href="/admin/users/<%= u.id %>">⚙️ В админке</a><% } %>
+  </div>
+  <% if (u.about) { %><div class="block-row message-body"><%- fmt.bbcode(u.about) %></div><% } %>
+</div></div>
+<div class="block"><div class="block-container">
+  <h2 class="block-header">Последние сообщения</h2>
+  <% posts.forEach(function (p) { %>
+    <div class="block-row"><a href="/posts/<%= p.id %>/"><b><%= p.title %></b></a> <span class="u-small u-muted">· <%= fmt.ago(p.created_at) %></span><div class="u-small"><%= fmt.plain(p.body, 200) %></div></div>
+  <% }) %>
+  <% if (!posts.length) { %><div class="block-empty">Сообщений пока нет.</div><% } %>
+</div></div>
+<%- include('partials/foot') %>

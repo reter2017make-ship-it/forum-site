@@ -1,0 +1,17 @@
+<%- include('top') %>
+<div class="block"><div class="block-container">
+  <% prefixes.forEach(function (p) { %>
+    <form method="post" action="/admin/prefixes" class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="id" value="<%= p.id %>">
+      <span class="label <%= p.css %>" style="min-width:60px;text-align:center"><%= p.title %></span>
+      <input class="input" name="title" value="<%= p.title %>" required><input class="input" name="css" value="<%= p.css %>"><input class="input" type="number" name="display_order" value="<%= p.display_order %>" style="width:80px">
+      <span class="u-muted u-small">тем: <%= p.used %></span><button class="button button--small">Сохранить</button>
+    </form>
+    <form method="post" action="/admin/prefixes/<%= p.id %>/delete" class="block-row" style="border:0;padding-top:0" data-confirm="Удалить префикс?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--small button--link" style="color:var(--danger)">Удалить «<%= p.title %>»</button></form>
+  <% }) %>
+</div></div>
+<form method="post" action="/admin/prefixes" class="block"><div class="block-container"><h2 class="block-header">Новый префикс</h2><div class="block-row inlineForm"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input class="input" name="title" placeholder="Текст или эмодзи" required>
+  <select class="input" name="css"><% ['label--primary','label--baltdef','label--mfdef','label--1xdef','label--profit','label--multi','label--red','label--green','label--gray'].forEach(function (c) { %><option><%= c %></option><% }) %></select>
+  <input class="input" type="number" name="display_order" value="100" style="width:80px"><button class="button button--primary">Добавить</button>
+</div><div class="block-footer">Префикс с классом label--profit попадает на страницу «Прибыльные игры».</div></div></form>
+<%- include('bottom') %>

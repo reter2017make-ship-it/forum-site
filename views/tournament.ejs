@@ -1,0 +1,47 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value"><%= t.title %> <span class="badge badge--<%= t.status %>"><%= TOURNAMENT_STATUS[t.status] %></span></h1>
+  <% if (me && !me.is_banned && !joined && t.status !== 'finished') { %><form method="post" action="/bitva/<%= t.id %>/join"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="button button--cta">Участвовать</button></form><% } %>
+</div>
+<div class="p-description"><%= t.sport %><%= t.season ? ' · ' + t.season : '' %><%= t.prize ? ' · Призовой фонд: ' + t.prize : '' %><% if (t.thread_url) { %> · <a href="<%= fmt.safeUrl(t.thread_url) %>">Тема турнира</a><% } %></div>
+<div class="p-body-main">
+  <div class="p-body-content">
+    <% if (t.description) { %><div class="block"><div class="block-container"><div class="block-row message-body"><%- fmt.bbcode(t.description) %></div></div></div><% } %>
+    <form method="post" action="/bitva/<%= t.id %>/predict" class="block">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="block-container">
+        <h2 class="block-header">Матчи</h2>
+        <% matches.forEach(function (m) { const open = !m.started && !m.result && t.status !== 'finished' && me; %>
+          <div class="matchCard" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:200px">
+              <div class="matchCard-teams" style="justify-content:flex-start;gap:8px"><span><%= m.home %></span><span class="u-muted">—</span><span><%= m.away %></span></div>
+              <div class="matchCard-time"><%= fmt.dmy(m.start_at) %>, <%= fmt.hm(m.start_at) %><% if (m.result) { %> · Итог: <b><%= m.result === 'X' ? 'ничья' : m.result === '1' ? 'победа ' + m.home : 'победа ' + m.away %></b><% } %></div>
+            </div>
+            <div class="voteRow" style="min-width:260px">
+              <% [['1', 'П1'], ['X', 'Х'], ['2', 'П2']].forEach(function (o) { %>
+                <% if (open) { %><label><input type="radio" name="m<%= m.id %>" value="<%= o[0] %>" <%= m.mine === o[0] ? 'checked' : '' %>><span><b><%= m.votes[o[0]] %></b><%= o[1] %></span></label>
+                <% } else { %><span class="voteStatic<%= m.mine === o[0] ? ' is-picked' : '' %>"><b><%= m.votes[o[0]] %></b><%= o[1] %></span><% } %>
+              <% }) %>
+            </div>
+          </div>
+        <% }) %>
+        <% if (!matches.length) { %><div class="block-empty">Матчи ещё не добавлены.</div><% } %>
+        <% if (me && !me.is_banned && matches.some(m => !m.started && !m.result) && t.status !== 'finished') { %><div class="formSubmitRow"><button class="button button--primary">Сохранить прогнозы</button></div><% } %>
+        <% if (!me) { %><div class="block-footer"><a href="/login/?to=/bitva/<%= t.id %>/">Войдите</a>, чтобы делать прогнозы.</div><% } %>
+      </div>
+    </form>
+  </div>
+  <aside class="p-body-sidebar">
+    <% if (t.status === 'finished' && t.gold) { %>
+    <div class="block"><div class="block-container"><h3 class="block-minorHeader">Победители</h3><ul class="listPlain">
+      <li>🥇 <%= t.gold %></li><li>🥈 <%= t.silver || 'Н/Д' %></li><li>🥉 <%= t.bronze || 'Н/Д' %></li></ul></div></div>
+    <% } %>
+    <div class="block"><div class="block-container">
+      <h3 class="block-minorHeader">Таблица</h3>
+      <table class="dataList"><tr><th>#</th><th>Участник</th><th class="cell-num">Очки</th></tr>
+        <% table.forEach(function (r, i) { %><tr><td><%= i + 1 %></td><td><a href="/members/<%= encodeURIComponent(r.username) %>/"><%= r.username %></a></td><td class="cell-num"><%= r.points %></td></tr><% }) %>
+      </table>
+      <% if (!table.length) { %><div class="block-empty u-small">Пока никто не участвует.</div><% } %>
+    </div></div>
+  </aside>
+</div>
+<%- include('partials/foot') %>

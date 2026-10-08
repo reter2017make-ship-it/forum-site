@@ -1,0 +1,30 @@
+<%- include('top') %>
+<div class="tiles">
+  <div class="tile"><div class="tile-label">Сообщения</div><div class="tile-value"><%= st.posts %></div></div>
+  <div class="tile"><div class="tile-label">Реакции получено</div><div class="tile-value"><%= st.reactions %></div></div>
+  <div class="tile"><div class="tile-label">Просмотры страниц</div><div class="tile-value"><%= visits %></div></div>
+  <div class="tile"><div class="tile-label">Регистрация</div><div class="tile-value" style="font-size:18px"><%= fmt.dmy(u.created_at) %></div><div class="tile-sub">был <%= fmt.ago(u.last_seen) || 'никогда' %></div></div>
+</div>
+<form method="post" class="block"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <dl class="formRow"><dt>Имя пользователя</dt><dd><input class="input" name="username" value="<%= u.username %>" required> <a class="u-small" href="/members/<%= encodeURIComponent(u.username) %>/">Профиль на сайте</a></dd></dl>
+    <dl class="formRow"><dt>E-mail</dt><dd><input class="input" type="email" name="email" value="<%= u.email %>" required></dd></dl>
+    <dl class="formRow"><dt>Роль</dt><dd><select class="input" name="role"><% [['user','Пользователь'],['moderator','Модератор'],['admin','Администратор']].forEach(function (r) { %><option value="<%= r[0] %>" <%= u.role === r[0] ? 'selected' : '' %>><%= r[1] %></option><% }) %></select><div class="formRow-explain">Модератор может закреплять, закрывать, перемещать и удалять темы и сообщения. Администратор получает доступ к этой панели.</div></dd></dl>
+    <dl class="formRow"><dt>Своё звание</dt><dd><input class="input" name="custom_title" value="<%= u.custom_title %>" placeholder="Пусто: звание по числу сообщений"></dd></dl>
+    <dl class="formRow"><dt>Значки</dt><dd><ul class="inputChoices"><% const cur = String(u.banners || '').split(',').map(x => x.trim()); BANNERS.forEach(function (b) { %><li><label><input type="checkbox" name="banners" value="<%= b %>" <%= cur.includes(b) ? 'checked' : '' %>> <span class="userBanner userBanner--<%= b %>"><%= b %></span></label></li><% }) %></ul>
+      <input class="input" name="extra_banners" value="<%= cur.filter(x => x && !BANNERS.includes(x)).join(', ') %>" placeholder="Свои значки через запятую" style="margin-top:6px"></dd></dl>
+    <dl class="formRow"><dt>Цвет имени</dt><dd><input class="input" name="username_color" value="<%= u.username_color %>" placeholder="#41A85F" style="width:140px"></dd></dl>
+    <dl class="formRow"><dt>Имя / город</dt><dd style="display:flex;gap:6px"><input class="input" name="real_name" value="<%= u.real_name %>" placeholder="Имя"><input class="input" name="location" value="<%= u.location %>" placeholder="Город"></dd></dl>
+    <dl class="formRow"><dt>О себе</dt><dd><textarea class="input" name="about" style="min-height:70px"><%= u.about %></textarea></dd></dl>
+    <dl class="formRow"><dt>Аватар</dt><dd><%- include('../partials/avatar', { u, size: 's', link: false }) %> <% if (u.avatar) { %><label><input type="checkbox" name="remove_avatar" value="1"> Удалить аватар</label><% } %></dd></dl>
+    <dl class="formRow"><dt>Новый пароль</dt><dd><input class="input" type="password" name="new_password" placeholder="Оставьте пустым, чтобы не менять" autocomplete="new-password"></dd></dl>
+    <dl class="formRow"><dt>Блокировка</dt><dd><label><input type="checkbox" name="is_banned" value="1" <%= u.is_banned ? 'checked' : '' %> <%= u.id === me.id ? 'disabled' : '' %>> Заблокировать</label><input class="input" name="ban_reason" value="<%= u.ban_reason %>" placeholder="Причина" style="margin-top:6px"></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Сохранить</button></div>
+  </div>
+</form>
+<% if (u.id !== me.id) { %>
+<form method="post" action="/admin/users/<%= u.id %>/delete" class="block" data-confirm="Удалить пользователя <%= u.username %>?"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container"><div class="block-row inlineForm"><label><input type="checkbox" name="delete_content" value="1"> Удалить также все его темы и сообщения</label> <button class="button button--danger button--small">Удалить пользователя</button></div></div>
+</form>
+<% } %>
+<%- include('bottom') %>

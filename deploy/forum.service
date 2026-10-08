@@ -1,0 +1,18 @@
+[Unit]
+Description=Форум
+After=network.target
+
+[Service]
+User=forum
+WorkingDirectory=/opt/forum
+EnvironmentFile=/etc/forum.env
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning server.js
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

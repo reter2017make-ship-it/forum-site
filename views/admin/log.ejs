@@ -1,0 +1,6 @@
+<%- include('top') %>
+<div class="block"><div class="block-container tableWrap"><table class="dataList">
+  <tr><th>Когда</th><th>Кто</th><th>Действие</th><th>Детали</th></tr>
+  <% rows.forEach(function (r) { %><tr><td class="u-small"><%= fmt.fullDate(r.created_at) %></td><td><%= r.username %></td><td><%= r.action %></td><td class="u-dim"><%= r.details %></td></tr><% }) %>
+</table><% if (!rows.length) { %><div class="block-empty">Действий пока нет.</div><% } %></div></div>
+<%- include('bottom') %>

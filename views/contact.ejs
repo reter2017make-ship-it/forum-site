@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<div class="p-title"><h1 class="p-title-value">Обратная связь</h1></div>
+<% if (sent) { %><div class="notice notice--success">Спасибо! Сообщение отправлено администрации.</div><% } else { %>
+<% if (error) { %><div class="notice notice--error"><%= error %></div><% } %>
+<form method="post" class="block" style="max-width:720px"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="block-container">
+    <% if (!me) { %>
+      <dl class="formRow"><dt>Ваше имя</dt><dd><input class="input" name="name" required></dd></dl>
+      <dl class="formRow"><dt>E-mail</dt><dd><input class="input" type="email" name="email" required></dd></dl>
+    <% } %>
+    <dl class="formRow"><dt>Сообщение</dt><dd><textarea class="input" name="message" required minlength="5"></textarea></dd></dl>
+    <div class="formSubmitRow"><button class="button button--primary">Отправить</button></div>
+  </div>
+</form>
+<% } %>
+<%- include('partials/foot') %>
